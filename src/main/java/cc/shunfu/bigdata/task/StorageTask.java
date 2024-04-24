@@ -15,10 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cc.shunfu.bigdata.utils.ChuanUtils.doPost;
 import static cc.shunfu.bigdata.utils.DateUtils.formatDate;
@@ -83,6 +80,68 @@ public class StorageTask {
                 jsonObject.put("F0000061", processOutput.getSkuName());
                 jsonObject.put("F0000059", processOutput.getQty());
                 jsonObject.put("F0000105", processOutput.getType());
+                jsonObject.put("F0000108", processOutput.getId());
+                jsonObject.put("F0000002", formatDate(processOutput.getLottable02(), "yyyy-MM-dd"));
+                jsonArray.add(jsonObject.toString());
+            }
+
+//            其他需要根据请求发送的数据
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("ActionName", "CreateBizObjects");// 调用的方法名
+            paramMap.put("SchemaCode", "D1485777fdfa3e4b8fc49f8bd11239329d23cac"); // 表单编码
+
+            paramMap.put("BizObjectArray", jsonArray.toArray());
+            paramMap.put("IsSubmit", "true");
+            String CreateStr = JSONObject.valueToString(paramMap);
+
+            // 请求接口
+            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
+
+            page++; // 翻页
+        }
+    }
+
+
+    /**
+     * 定时任务方法用于定时向CRM系统-工序产值-半成品数据源推送数据
+     *
+     * @author svanrj
+     * @date 2024/5/16
+     */
+
+    @Async
+    public void sendSemiStorage() {
+
+        // 获取当前的日期用于获取当日数据，不提取到公共变量的原因是定时任务执行获取不到最新数据
+        final LocalDateTime today = LocalDateTime.now();
+        final String todayString = formatDateTime(today, "yyyy-MM-dd");
+        String[] areaCodes = {"BCPK"};
+
+        //用于分页和计数使用
+        int page = 0;
+        int count = 0;
+
+        // 利用循环分页获取数据，避免数据量过大导致内存溢出
+        while (true) {
+            List<ProcessOutput> processOutputs = processOutputMapper.getSemiProcessOutput(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300, areaCodes);
+
+//            判断数据是否获取完成
+            if (processOutputs.isEmpty()) {
+                log.info("氚云数据同步完成!" + "共同步" + count + "条数据");
+                break;
+            }
+//            对获取到的数据进行统计
+            count += processOutputs.size();
+
+//            组装要推送到CRM的数据
+            List<String> jsonArray = new ArrayList<>();
+            for (ProcessOutput processOutput : processOutputs) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("F0000060", "压铸车间");
+                jsonObject.put("F0000058", processOutput.getSku());
+                jsonObject.put("F0000061", processOutput.getSkuName());
+                jsonObject.put("F0000059", processOutput.getQty());
+                jsonObject.put("F0000105", Objects.equals(processOutput.getType(), "越库") ? "后道半成品越库" : processOutput.getType());
                 jsonObject.put("F0000108", processOutput.getId());
                 jsonObject.put("F0000002", formatDate(processOutput.getLottable02(), "yyyy-MM-dd"));
                 jsonArray.add(jsonObject.toString());
@@ -221,6 +280,22 @@ public class StorageTask {
         log.info("氚云数据同步完成!" + "共同步" + processOutputs.size() + "条数据");
     }
 
+    @Async
+    public void sendDieCastingOutputValue() {
+        final LocalDateTime today = LocalDateTime.now();
+        final String todayString = formatDateTime(today, "yyyy-MM-dd");
+        String[] areaCodes = {"BCPK"};
+
+        List<ProcessOutputVO> processOutputs = processOutputMapper.getSemiProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", areaCodes, "后道完工品");
+
+        Map<String, Object> paramMap = CyCreate(processOutputs, "D283959snbcipudg2kqstxip06ou", "压铸");
+        String CreateStr = JSONObject.valueToString(paramMap);
+
+        // 请求接口
+        doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
+        log.info("氚云数据同步完成!" + "共同步" + processOutputs.size() + "条数据");
+    }
+
     /**
      * 内部提取方法用于构建具体要推送的数据
      *
@@ -238,31 +313,62 @@ public class StorageTask {
             queryWrapper.last("limit 1");
             CrmRxConfig crmRxConfig = crmRxConfigMapper.selectOne(queryWrapper);
             if (crmRxConfig != null) {
-                float jjdcl = crmRxConfig.getJjCz() == 0 ? 0 : processOutput.getTotalMachineAddition() / crmRxConfig.getJjCz();
-                float zbdcl = crmRxConfig.getZpCz() == 0 ? 0 : processOutput.getTotalAssembleCost() / crmRxConfig.getZpCz();
-                float gxcz = processOutput.getTotalMachineAddition() + processOutput.getTotalFrictionWelding() + processOutput.getTotalCleaning() + processOutput.getTotalSideLeakage() + processOutput.getTotalAssembleCost();
-                float gxdcl = crmRxConfig.getCz() == 0 ? 0 : gxcz / crmRxConfig.getCz();
+                if (type.equals("压铸")) {
+                    float yzdcl = crmRxConfig.getYzCz() == 0 ? 0 : processOutput.getTotalMoldClosingCost() / crmRxConfig.getYzCz();
+                    float hddcl = crmRxConfig.getHdCz() == 0 ? 0 : processOutput.getTotalPostProcessing() / crmRxConfig.getHdCz();
+                    float gxcz = processOutput.getTotalMoldClosingCost() + processOutput.getTotalPostProcessing();
 
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("F0000109", "三大事业部");
-                jsonObject.put("F0000016", processOutput.getDepa());
-                jsonObject.put("F0000002", formatDate(processOutput.getDate(), "yyyy-MM-dd"));
-                jsonObject.put("F0000086", processOutput.getTotalFrictionWelding());
-                jsonObject.put("F0000087", processOutput.getTotalCleaning());
-                jsonObject.put("F0000088", processOutput.getTotalSideLeakage());
-                jsonObject.put("F0000089", processOutput.getTotalAssembleCost());
-                jsonObject.put("F0000091", crmRxConfig.getJjCz());
-                jsonObject.put("F0000103", crmRxConfig.getJjRj());
-                jsonObject.put("F0000085", processOutput.getTotalMachineAddition());
-                jsonObject.put("F0000080", crmRxConfig.getCz());
-                jsonObject.put("F0000078", crmRxConfig.getRj());
-                jsonObject.put("F0000077", gxcz);
-                jsonObject.put("F0000110", jjdcl);
-                jsonObject.put("F0000081", gxdcl);
-                jsonObject.put("F0000111", crmRxConfig.getZpCz());
-                jsonObject.put("F0000112", crmRxConfig.getZpRj());
-                jsonObject.put("F0000115", zbdcl);
-                jsonArray.add(jsonObject.toString());
+                    float gxdcl = crmRxConfig.getCz() == 0 ? 0 : gxcz / crmRxConfig.getCz();
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("F0000109", "压铸车间");
+                    jsonObject.put("F0000002", formatDate(processOutput.getDate(), "yyyy-MM-dd"));
+                    jsonObject.put("F0000110", crmRxConfig.getYzCz());
+                    jsonObject.put("F0000111", crmRxConfig.getYzRj());
+                    jsonObject.put("F0000082", processOutput.getTotalMoldClosingCost());
+                    jsonObject.put("F0000113", yzdcl);
+                    jsonObject.put("F0000114", "");
+                    jsonObject.put("F0000115", "");
+                    jsonObject.put("F0000116", crmRxConfig.getHdCz());
+                    jsonObject.put("F0000096", crmRxConfig.getHdRj());
+                    jsonObject.put("F0000083", processOutput.getTotalPostProcessing());
+                    jsonObject.put("F0000120", hddcl);
+                    jsonObject.put("F0000119", "");
+                    jsonObject.put("F0000121", "");
+                    jsonObject.put("F0000095", crmRxConfig.getCz());
+                    jsonObject.put("F0000096", crmRxConfig.getRj());
+                    jsonObject.put("F0000084", gxcz);
+                    jsonObject.put("F0000100", gxdcl);
+
+
+                    jsonArray.add(jsonObject.toString());
+                } else {
+                    float jjdcl = crmRxConfig.getJjCz() == 0 ? 0 : processOutput.getTotalMachineAddition() / crmRxConfig.getJjCz();
+                    float zbdcl = crmRxConfig.getZpCz() == 0 ? 0 : processOutput.getTotalAssembleCost() / crmRxConfig.getZpCz();
+                    float gxcz = processOutput.getTotalMachineAddition() + processOutput.getTotalFrictionWelding() + processOutput.getTotalCleaning() + processOutput.getTotalSideLeakage() + processOutput.getTotalAssembleCost();
+                    float gxdcl = crmRxConfig.getCz() == 0 ? 0 : gxcz / crmRxConfig.getCz();
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("F0000109", "三大事业部");
+                    jsonObject.put("F0000016", processOutput.getDepa());
+                    jsonObject.put("F0000002", formatDate(processOutput.getDate(), "yyyy-MM-dd"));
+                    jsonObject.put("F0000086", processOutput.getTotalFrictionWelding());
+                    jsonObject.put("F0000087", processOutput.getTotalCleaning());
+                    jsonObject.put("F0000088", processOutput.getTotalSideLeakage());
+                    jsonObject.put("F0000089", processOutput.getTotalAssembleCost());
+                    jsonObject.put("F0000091", crmRxConfig.getJjCz());
+                    jsonObject.put("F0000103", crmRxConfig.getJjRj());
+                    jsonObject.put("F0000085", processOutput.getTotalMachineAddition());
+                    jsonObject.put("F0000080", crmRxConfig.getCz());
+                    jsonObject.put("F0000078", crmRxConfig.getRj());
+                    jsonObject.put("F0000077", gxcz);
+                    jsonObject.put("F0000110", jjdcl);
+                    jsonObject.put("F0000081", gxdcl);
+                    jsonObject.put("F0000111", crmRxConfig.getZpCz());
+                    jsonObject.put("F0000112", crmRxConfig.getZpRj());
+                    jsonObject.put("F0000115", zbdcl);
+                    jsonArray.add(jsonObject.toString());
+                }
             } else {
                 log.info(formatDate(processOutput.getDate(), "yyyy-MM-dd") + " 的人效产值目标暂未设定");
             }

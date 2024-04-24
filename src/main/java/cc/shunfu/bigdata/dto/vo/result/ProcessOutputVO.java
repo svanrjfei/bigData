@@ -21,4 +21,5 @@ public class ProcessOutputVO {
     private Float totalSideLeakage;
     private Float totalAssembleCost;
     private Float totalMachineAddition;
+    private Float totalPostProcessing;
 }

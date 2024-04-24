@@ -34,7 +34,7 @@ spring:
     #数据源基本信息，也可放在druid下
     url: jdbc:mysql://127.0.0.1:3306/big_data?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: root
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
     druid:

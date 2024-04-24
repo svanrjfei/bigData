@@ -23,7 +23,17 @@ public interface ProcessOutputMapper extends BaseMapper<ProcessOutput> {
                                          @Param("limit") int limit,
                                          @Param("areaCodes") String[] areaCodes);
 
+    List<ProcessOutput> getSemiProcessOutput(@Param("startDate") String startDate,
+                                         @Param("endDate") String endDate,
+                                         @Param("offset") int offset,
+                                         @Param("limit") int limit,
+                                         @Param("areaCodes") String[] areaCodes);
+
     List<ProcessOutputVO> getProcessOutputByType(@Param("startDate") String startDate,
+                                                 @Param("endDate") String endDate,
+                                                 @Param("areaCodes") String[] areaCodes,
+                                                 @Param("type") String type);
+    List<ProcessOutputVO> getSemiProcessOutputByType(@Param("startDate") String startDate,
                                                  @Param("endDate") String endDate,
                                                  @Param("areaCodes") String[] areaCodes,
                                                  @Param("type") String type);

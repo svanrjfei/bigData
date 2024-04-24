@@ -18,18 +18,38 @@
         ORDER BY Lottable02 DESC
         LIMIT #{offset}, #{limit}
     </select>
+
+    <select id="getSemiProcessOutput" resultType="cc.shunfu.bigdata.dto.entity.ProcessOutput">
+        select Sku,
+        SkuName,
+        Qty,
+        Lottable02,
+        AreaCode,
+        type,
+        id
+        from process_output
+        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d
+        %H:%i:%s') and Lottable09='后道完工品'
+        and AreaCode in
+        <foreach collection="areaCodes" item="areaCode" index="index" open="(" close=")" separator=",">
+            #{areaCode}
+        </foreach>
+        ORDER BY Lottable02 DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
     <select id="getProcessOutputByType" resultType="cc.shunfu.bigdata.dto.vo.result.ProcessOutputVO">
-        select
+        SELECT
         DATE(Lottable02) AS date,
         AreaCode,
         depa,
-        SUM(mold_closing_cost * Qty) AS total_mold_closing_cost,
-        SUM(friction_welding * Qty) AS total_friction_welding,
-        SUM(cleaning * Qty) AS total_cleaning,
-        SUM(side_leakage * Qty) AS total_side_leakage,
-        SUM(assembly_cost * Qty) AS total_assemble_cost,
-        SUM(machine_addition * Qty) AS total_machine_addition
-        from process_output
+        COALESCE(SUM(mold_closing_cost * Qty), 0) AS total_mold_closing_cost,
+        COALESCE(SUM(friction_welding * Qty), 0) AS total_friction_welding,
+        COALESCE(SUM(cleaning * Qty), 0) AS total_cleaning,
+        COALESCE(SUM(side_leakage * Qty), 0) AS total_side_leakage,
+        COALESCE(SUM(assembly_cost * Qty), 0) AS total_assemble_cost,
+        COALESCE(SUM(machine_addition * Qty), 0) AS total_machine_addition
+        FROM process_output
         WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d
         %H:%i:%s')
         and AreaCode in
@@ -41,6 +61,32 @@
             and depa=#{type}
         </if>
         GROUP BY depa,Date(Lottable02),AreaCode
+        ORDER BY Date(Lottable02) DESC
+    </select>
+
+    <select id="getSemiProcessOutputByType" resultType="cc.shunfu.bigdata.dto.vo.result.ProcessOutputVO">
+        SELECT
+        DATE(Lottable02) AS date,
+        AreaCode,
+        COALESCE(SUM(mold_closing_cost * Qty), 0) AS total_mold_closing_cost,
+        COALESCE(SUM(friction_welding * Qty), 0) AS total_friction_welding,
+        COALESCE(SUM(cleaning * Qty), 0) AS total_cleaning,
+        COALESCE(SUM(side_leakage * Qty), 0) AS total_side_leakage,
+        COALESCE(SUM(assembly_cost * Qty), 0) AS total_assemble_cost,
+        COALESCE(SUM(machine_addition * Qty), 0) AS total_machine_addition,
+        COALESCE(SUM(post_processing * Qty), 0) AS total_post_processing
+        FROM process_output
+        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d
+        %H:%i:%s')
+        and AreaCode in
+        <foreach collection="areaCodes" item="areaCode" index="index" open="(" close=")" separator=",">
+            #{areaCode}
+        </foreach>
+
+        <if test="type != null">
+            and Lottable09=#{type}
+        </if>
+        GROUP BY Date(Lottable02),AreaCode
         ORDER BY Date(Lottable02) DESC
     </select>
 </mapper>

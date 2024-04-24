@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.shunfu.bigdata.model.mapper.ProductionEfficiencyMapper">
+
+    <insert id="insertProductionEfficiency" parameterType="cc.shunfu.bigdata.model.entity.ProductionEfficiencyEntity">
+        INSERT INTO production_efficiency (batch, device, startTime, endTime, moldCount, boostCount, qualifiedCount,
+                                           cycleTime, manualCount, passRate, coolingCount, waterUsage, electricityUsage,
+                                           gasUsage, moldReleaseAgent, compressedAirUsage, hydraulicOil, punch,
+                                           hardwareAccessories,product)
+        VALUES (#{batch}, #{device}, #{startTime}, #{endTime}, #{moldCount}, #{boostCount}, #{qualifiedCount},
+                #{cycleTime}, #{manualCount}, #{passRate}, #{coolingCount}, #{waterUsage}, #{electricityUsage},
+                #{gasUsage}, #{moldReleaseAgent}, #{compressedAirUsage}, #{hydraulicOil}, #{punch},
+                #{hardwareAccessories},#{product})
+    </insert>
+
+</mapper>

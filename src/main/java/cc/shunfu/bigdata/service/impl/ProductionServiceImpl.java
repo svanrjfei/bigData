@@ -3,16 +3,12 @@ package cc.shunfu.bigdata.service.impl;
 import cc.shunfu.bigdata.config.IotDBSessionConfig;
 import cc.shunfu.bigdata.model.entity.DeviceRecordingEntity;
 import cc.shunfu.bigdata.model.entity.ProductionEfficiencyEntity;
-import cc.shunfu.bigdata.model.entity.SalesOrderEntity;
 import cc.shunfu.bigdata.model.mapper.DeviceRecordingMapper;
 import cc.shunfu.bigdata.model.mapper.ProductionEfficiencyMapper;
-import cc.shunfu.bigdata.model.mapper.SalesOrderMapper;
 import cc.shunfu.bigdata.model.param.IotDbParam;
 import cc.shunfu.bigdata.model.param.ReportingForWorkParams;
 import cc.shunfu.bigdata.service.ProductionService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.iotdb.session.pool.SessionDataSetWrapper;
 import org.apache.iotdb.tsfile.read.common.Field;
 import org.apache.iotdb.tsfile.read.common.RowRecord;
@@ -51,8 +47,6 @@ public class ProductionServiceImpl implements ProductionService {
         ProductionEfficiencyEntity equipmentResult = new ProductionEfficiencyEntity();
 //        查询上下模记录
         DeviceRecordingEntity deviceRecordingEntity = deviceRecordingMapper.queryDevice(reportingForWorkParams);
-//        指定日期格式
-        SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         equipmentResult.setBatch(reportingForWorkParams.getBatch());
         equipmentResult.setProduct(reportingForWorkParams.getProduct());

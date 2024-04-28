@@ -1,5 +1,6 @@
 package cc.shunfu.bigdata.model.param;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**

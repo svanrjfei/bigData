@@ -3,7 +3,6 @@ package cc.shunfu.bigdata.task;
 import cc.shunfu.bigdata.model.entity.ReturnSalesOrderEntity;
 import cc.shunfu.bigdata.model.mapper.ReturnSalesOrderMapper;
 import cc.shunfu.bigdata.service.SalesOrderService;
-import com.kingdee.bos.webapi.sdk.K3CloudApi;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -16,10 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static cc.shunfu.bigdata.utils.ChuanUtils.doPost;
@@ -44,8 +40,8 @@ public class ReturnSalesOrderTask {
     SalesOrderService salesOrderService;
 
     private SqlSessionFactory sqlSessionFactory;
-    LocalDateTime today = LocalDateTime.now();
-    String todayString = formatDateTime(today, "yyyy-MM-dd");
+    final LocalDateTime today = LocalDateTime.now();
+    final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
     @Autowired
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
@@ -96,13 +92,13 @@ public class ReturnSalesOrderTask {
     public void sendReturnSales() {
         int page = 0;
         while (true) {
-            List<ReturnSalesOrderEntity> ReturnRalesOrders = salesOrderService.getReturnSalesOrders("2024-01-01", "2024-04-30", page * 300, 300);
+            List<ReturnSalesOrderEntity> ReturnRalesOrders = salesOrderService.getReturnSalesOrders(todayString, todayString, page * 300, 300);
             if (ReturnRalesOrders.isEmpty()) {
                 log.info("氚云数据同步完成!");
                 break;
             }
 
-            List<String> jsonArray = new ArrayList<String>();
+            List<String> jsonArray = new ArrayList<>();
             for (ReturnSalesOrderEntity returnSalesOrder : ReturnRalesOrders) {
                 JSONObject jsonObject = new JSONObject();
                 Calendar calendar = Calendar.getInstance();

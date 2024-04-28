@@ -31,7 +31,7 @@ public interface SalesOrderService {
      *
      * @param startDate 开始时间
      * @param endDate   结束时间
-     * @param page      页数
+     * @param offset    跳过多少条数据
      * @param limit     每页数量
      * @return List<ReturnSalesOrderEntity>
      * @author svanrj

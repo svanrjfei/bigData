@@ -12,9 +12,25 @@ spring:
     password: Hw123456
     url: jdbc:mysql://123.249.101.90:3306/big_data?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&rewriteBatchedStatements=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 mybatis:
   config-location: classpath:mybatis-config.xml
 
 logging:
   level:
     cc.shunfu.bigdata.model.mapper: DEBUG
+  config: classpath:logback.xml
+
+springdoc:
+  api-docs:
+    #是否开启文档功能
+    enabled: true
+    #swagger后端请求地址
+    path: /api-docs
+  swagger-ui:
+    #自定义swagger前端请求路径，输入http：127.0.0.1:8080/test会自动重定向到swagger页面
+    path: /api
+  packages-to-scan: cc.shunfu.bigdata.controller,cc.shunfu.bigdata

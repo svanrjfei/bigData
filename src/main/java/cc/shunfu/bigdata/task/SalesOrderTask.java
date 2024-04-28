@@ -43,8 +43,8 @@ public class SalesOrderTask {
     SalesOrderService salesOrderService;
 
     private SqlSessionFactory sqlSessionFactory;
-    LocalDateTime today = LocalDateTime.now();
-    String todayString = formatDateTime(today, "yyyy-MM-dd");
+    final LocalDateTime today = LocalDateTime.now();
+    final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
 
     @Autowired
@@ -98,7 +98,7 @@ public class SalesOrderTask {
     public void sendSales() {
         int page = 0;
         while (true) {
-            List<SalesOrderEntity> salesOrders = salesOrderService.getSalesOrders("2024-01-01", "2024-04-30", page * 300, 300);
+            List<SalesOrderEntity> salesOrders = salesOrderService.getSalesOrders(todayString, todayString, page * 300, 300);
             if (salesOrders.isEmpty()) {
                 log.info("氚云数据同步完成!");
                 break;
@@ -130,10 +130,10 @@ public class SalesOrderTask {
 
             paramMap.put("BizObjectArray", jsonArray.toArray());
             paramMap.put("IsSubmit", "true");
-            StringCreateStr = JSONObject.valueToString(paramMap);
+            String CreateStr = JSONObject.valueToString(paramMap);
 
             // 请求接口
-            doPost( "https://www.h3yun.com/OpenApi/Invoke", CreateStr);
+            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
 
             page++;
         }

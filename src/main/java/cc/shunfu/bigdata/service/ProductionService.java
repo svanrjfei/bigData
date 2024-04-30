@@ -1,7 +1,7 @@
 package cc.shunfu.bigdata.service;
 
-import cc.shunfu.bigdata.model.entity.ProductionEfficiencyEntity;
-import cc.shunfu.bigdata.model.param.ReportingForWorkParams;
+import cc.shunfu.bigdata.dto.entity.ProductionEfficiency;
+import cc.shunfu.bigdata.dto.vo.param.ReportingForWorkParams;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +15,6 @@ public interface ProductionService {
      * @throws Exception 查询过程中发生异常时抛出
      */
 
-    ProductionEfficiencyEntity productionEfficiency(ReportingForWorkParams reportingForWorkParams) throws Exception;
+    ProductionEfficiency productionEfficiency(ReportingForWorkParams reportingForWorkParams) throws Exception;
 
 }

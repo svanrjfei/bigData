@@ -1,7 +1,8 @@
 package cc.shunfu.bigdata.exception;
 
-import cc.shunfu.bigdata.model.result.ErrorCode;
-import cc.shunfu.bigdata.model.result.ResponseData;
+import cc.shunfu.bigdata.dto.vo.result.ErrorCode;
+import cc.shunfu.bigdata.dto.vo.result.Response;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,23 +20,37 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     /*如果不加，则会导致无法进行异常处理*/
     @ResponseBody
-    public ResponseData error(Exception e) {
+    public Response error(Exception e) {
         e.printStackTrace();
-        return ResponseData.fail("系统错误！");
+        return Response.fail("系统错误！");
     }
 
     @ExceptionHandler(ArithmeticException.class)
     @ResponseBody
-    public ResponseData error(ArithmeticException e) {
+    public Response error(ArithmeticException e) {
         e.printStackTrace();
-        return ResponseData.fail(ErrorCode.ARITHMETIC_EXCEPTION.getCode(), ErrorCode.ARITHMETIC_EXCEPTION.getMsg());
+        return Response.fail(ErrorCode.ARITHMETIC_EXCEPTION.getCode(), ErrorCode.ARITHMETIC_EXCEPTION.getMsg());
     }
 
     //自定义异常类
     @ExceptionHandler(TokenRuntimeException.class)
     @ResponseBody
-    public ResponseData error(TokenRuntimeException e) {
+    public Response error(TokenRuntimeException e) {
         e.printStackTrace();
-        return ResponseData.fail(e.getCode(), e.getMsg());
+        return Response.fail(e.getCode(), e.getMsg());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseBody
+    public Response error(HttpMessageNotReadableException e) {
+        e.printStackTrace();
+        return Response.fail(400, "传入参数格式不正确");
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseBody
+    public Response error(RuntimeException e) {
+        e.printStackTrace();
+        return Response.fail(500, e.getMessage());
     }
 }

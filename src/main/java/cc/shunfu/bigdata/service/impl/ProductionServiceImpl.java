@@ -1,12 +1,12 @@
 package cc.shunfu.bigdata.service.impl;
 
 import cc.shunfu.bigdata.config.IotDBSessionConfig;
-import cc.shunfu.bigdata.model.entity.DeviceRecordingEntity;
-import cc.shunfu.bigdata.model.entity.ProductionEfficiencyEntity;
-import cc.shunfu.bigdata.model.mapper.DeviceRecordingMapper;
-import cc.shunfu.bigdata.model.mapper.ProductionEfficiencyMapper;
-import cc.shunfu.bigdata.model.param.IotDbParam;
-import cc.shunfu.bigdata.model.param.ReportingForWorkParams;
+import cc.shunfu.bigdata.dto.entity.DeviceRecording;
+import cc.shunfu.bigdata.dto.entity.ProductionEfficiency;
+import cc.shunfu.bigdata.dto.mapper.DeviceRecordingMapper;
+import cc.shunfu.bigdata.dto.mapper.ProductionEfficiencyMapper;
+import cc.shunfu.bigdata.dto.vo.param.IotDbParam;
+import cc.shunfu.bigdata.dto.vo.param.ReportingForWorkParams;
 import cc.shunfu.bigdata.service.ProductionService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.iotdb.session.pool.SessionDataSetWrapper;
@@ -42,11 +42,15 @@ public class ProductionServiceImpl implements ProductionService {
      * @date 2024/4/12
      */
     @Override
-    public ProductionEfficiencyEntity productionEfficiency(ReportingForWorkParams reportingForWorkParams) throws Exception {
+    public ProductionEfficiency productionEfficiency(ReportingForWorkParams reportingForWorkParams) throws Exception {
 //        生产效率初始化
-        ProductionEfficiencyEntity equipmentResult = new ProductionEfficiencyEntity();
+        ProductionEfficiency equipmentResult = new ProductionEfficiency();
 //        查询上下模记录
-        DeviceRecordingEntity deviceRecordingEntity = deviceRecordingMapper.queryDevice(reportingForWorkParams);
+        DeviceRecording deviceRecordingEntity = deviceRecordingMapper.queryDevice(reportingForWorkParams);
+        if (deviceRecordingEntity == null) {
+            log.error("设备记录不存在");
+            return null;
+        }
 
         equipmentResult.setBatch(reportingForWorkParams.getBatch());
         equipmentResult.setProduct(reportingForWorkParams.getProduct());
@@ -71,7 +75,7 @@ public class ProductionServiceImpl implements ProductionService {
         return equipmentResult;
     }
 
-    private void queryDataFromIotDb(IotDbParam iotDbParam, ProductionEfficiencyEntity equipmentResult) throws Exception {
+    private void queryDataFromIotDb(IotDbParam iotDbParam, ProductionEfficiency equipmentResult) throws Exception {
         String originalFormat = "yyyy-MM-dd HH:mm:ss";
 
         if (null != iotDbParam.getSn()) {
@@ -111,7 +115,7 @@ public class ProductionServiceImpl implements ProductionService {
      * @author svanrj
      * @date 2024/4/11
      */
-    private void packagingData(ProductionEfficiencyEntity equipmentResult, List<Field> fields, List<String> titleList) {
+    private void packagingData(ProductionEfficiency equipmentResult, List<Field> fields, List<String> titleList) {
         Map<String, String> map = new HashMap<>();
 
         for (int i = 0; i < fields.size(); i++) {

@@ -1,4 +1,4 @@
-package cc.shunfu.bigdata.model.param;
+package cc.shunfu.bigdata.dto.vo.param;
 
 import lombok.Data;
 

@@ -1,12 +1,10 @@
 package cc.shunfu.bigdata.service.impl;
 
-import cc.shunfu.bigdata.model.entity.ReturnSalesOrderEntity;
-import cc.shunfu.bigdata.model.entity.SalesOrderEntity;
-import cc.shunfu.bigdata.model.mapper.ReturnSalesOrderMapper;
-import cc.shunfu.bigdata.model.mapper.SalesOrderMapper;
+import cc.shunfu.bigdata.dto.entity.ReturnSalesOrder;
+import cc.shunfu.bigdata.dto.entity.SalesOrder;
+import cc.shunfu.bigdata.dto.mapper.ReturnSalesOrderMapper;
+import cc.shunfu.bigdata.dto.mapper.SalesOrderMapper;
 import cc.shunfu.bigdata.service.SalesOrderService;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +34,12 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
-    public List<SalesOrderEntity> getSalesOrders(String startDate, String endDate, int offset, int limit) {
+    public List<SalesOrder> getSalesOrders(String startDate, String endDate, int offset, int limit) {
         return salesOrderMapper.getSalesOrders(startDate, endDate, offset, limit);
     }
 
     @Override
-    public List<ReturnSalesOrderEntity> getReturnSalesOrders(String startDate, String endDate, int offset, int limit) {
+    public List<ReturnSalesOrder> getReturnSalesOrders(String startDate, String endDate, int offset, int limit) {
         return returnSalesOrderMapper.getReturnSalesOrder(startDate, endDate, offset, limit);
     }
 

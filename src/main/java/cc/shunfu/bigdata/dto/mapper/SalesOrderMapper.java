@@ -1,6 +1,7 @@
-package cc.shunfu.bigdata.model.mapper;
+package cc.shunfu.bigdata.dto.mapper;
 
-import cc.shunfu.bigdata.model.entity.SalesOrderEntity;
+import cc.shunfu.bigdata.dto.entity.SalesOrder;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,12 +14,12 @@ import java.util.List;
  */
 
 @Mapper
-public interface SalesOrderMapper {
-    void batchInsertOrUpdateSalesOrders(List<SalesOrderEntity> salesOrders);
+public interface SalesOrderMapper extends BaseMapper<SalesOrder> {
+    void batchInsertOrUpdateSalesOrders(List<SalesOrder> salesOrders);
 
-    int insertOrUpdateSalesOrder(SalesOrderEntity salesOrder);
+    int insertOrUpdateSalesOrder(SalesOrder salesOrder);
 
-    List<SalesOrderEntity> getSalesOrders(
+    List<SalesOrder> getSalesOrders(
             @Param("startDate") String startDate,
             @Param("endDate") String endDate,
             @Param("offset") int offset,

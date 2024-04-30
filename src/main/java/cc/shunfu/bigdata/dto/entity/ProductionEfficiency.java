@@ -1,4 +1,4 @@
-package cc.shunfu.bigdata.model.entity;
+package cc.shunfu.bigdata.dto.entity;
 
 import lombok.Data;
 
@@ -13,7 +13,7 @@ import java.util.Date;
  */
 
 @Data
-public class ProductionEfficiencyEntity {
+public class ProductionEfficiency {
     // 所在批次
     private String batch;
     // 所在设备

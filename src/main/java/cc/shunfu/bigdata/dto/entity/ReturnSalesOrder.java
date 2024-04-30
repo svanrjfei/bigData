@@ -1,4 +1,4 @@
-package cc.shunfu.bigdata.model.entity;
+package cc.shunfu.bigdata.dto.entity;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import java.util.Date;
  * @CreateTime: 2024-04-18
  */
 @Data
-public class ReturnSalesOrderEntity {
+public class ReturnSalesOrder {
     //    ID
     private Integer id;
     //    退货单号

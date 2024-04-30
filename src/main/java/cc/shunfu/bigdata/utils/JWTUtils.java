@@ -1,11 +1,10 @@
 package cc.shunfu.bigdata.utils;
 
-import cc.shunfu.bigdata.model.entity.UserDetails;
+import cc.shunfu.bigdata.dto.entity.UserDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Calendar;

@@ -1,7 +1,7 @@
 package cc.shunfu.bigdata.task;
 
-import cc.shunfu.bigdata.model.entity.ReturnSalesOrderEntity;
-import cc.shunfu.bigdata.model.mapper.ReturnSalesOrderMapper;
+import cc.shunfu.bigdata.dto.entity.ReturnSalesOrder;
+import cc.shunfu.bigdata.dto.mapper.ReturnSalesOrderMapper;
 import cc.shunfu.bigdata.service.SalesOrderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.ExecutorType;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -57,9 +56,8 @@ public class ReturnSalesOrderTask {
      */
 
     @Async
-    @Scheduled(cron = "0 0 23 * * ? ")
     public void getReturnSales() {
-        List<ReturnSalesOrderEntity> salesOrderEntities = new ArrayList<>();
+        List<ReturnSalesOrder> salesOrderEntities = new ArrayList<>();
 
         String fieldKeys = "FId,FBillNo,FDocumentStatus.FCaption,FApproveDate,FRetcustId.FNumber,FRetcustId.FName,FMaterialId.FNumber,FMaterialId.FName,FRealQty,FTaxPrice,FAllAmount_LC,FSaleOrgId.FName";
         LinkedList<String> queryFilters = new LinkedList<>();
@@ -71,7 +69,7 @@ public class ReturnSalesOrderTask {
         String filterStr = String.join(" and ", queryFilters);
         try {
 
-            getK3CloudData(ReturnSalesOrderEntity.class, filterStr, fieldKeys, salesOrderEntities, "SAL_RETURNSTOCK", "FApproveDate Desc");
+            getK3CloudData(ReturnSalesOrder.class, filterStr, fieldKeys, salesOrderEntities, "SAL_RETURNSTOCK", "FApproveDate Desc");
 
             // 处理获取到的所有数据
             SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
@@ -88,18 +86,17 @@ public class ReturnSalesOrderTask {
 
 
     @Async
-    @Scheduled(cron = "0 05 23 * * ? ")
     public void sendReturnSales() {
         int page = 0;
         while (true) {
-            List<ReturnSalesOrderEntity> ReturnRalesOrders = salesOrderService.getReturnSalesOrders(todayString, todayString, page * 300, 300);
+            List<ReturnSalesOrder> ReturnRalesOrders = salesOrderService.getReturnSalesOrders(todayString, todayString, page * 300, 300);
             if (ReturnRalesOrders.isEmpty()) {
                 log.info("氚云数据同步完成!");
                 break;
             }
 
             List<String> jsonArray = new ArrayList<>();
-            for (ReturnSalesOrderEntity returnSalesOrder : ReturnRalesOrders) {
+            for (ReturnSalesOrder returnSalesOrder : ReturnRalesOrders) {
                 JSONObject jsonObject = new JSONObject();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(returnSalesOrder.getApproveDate());

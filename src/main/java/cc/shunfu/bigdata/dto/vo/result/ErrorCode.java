@@ -1,4 +1,4 @@
-package cc.shunfu.bigdata.model.result;
+package cc.shunfu.bigdata.dto.vo.result;
 
 public enum ErrorCode {
 

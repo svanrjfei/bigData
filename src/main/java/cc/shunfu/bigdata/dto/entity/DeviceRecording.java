@@ -1,4 +1,4 @@
-package cc.shunfu.bigdata.model.entity;
+package cc.shunfu.bigdata.dto.entity;
 
 import lombok.Data;
 
@@ -13,7 +13,8 @@ import java.util.Date;
  */
 
 @Data
-public class DeviceRecordingEntity {
+public class DeviceRecording {
+
     //    设备id
     private String castDeviceId;
     //    开始时间

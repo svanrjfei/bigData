@@ -1,7 +1,7 @@
 package cc.shunfu.bigdata.task;
 
-import cc.shunfu.bigdata.model.entity.SalesOrderEntity;
-import cc.shunfu.bigdata.model.mapper.SalesOrderMapper;
+import cc.shunfu.bigdata.dto.entity.SalesOrder;
+import cc.shunfu.bigdata.dto.mapper.SalesOrderMapper;
 import cc.shunfu.bigdata.service.SalesOrderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.ExecutorType;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -61,10 +60,9 @@ public class SalesOrderTask {
      */
 
     @Async
-    @Scheduled(cron = "0 0 23 * * ? ")
     public void getSales() {
 
-        List<SalesOrderEntity> salesOrderEntities = new ArrayList<>();
+        List<SalesOrder> salesOrderEntities = new ArrayList<>();
         String fieldKeys = "FId,FBILLNO,FDOCUMENTSTATUS.FCaption,FDATE,FMATERIALID.FNumber,FMaterialId.FName,FMODEL,FUnitID.FName,FQty,FConsignPrice,FConsignAmount,FTaxPrice,FAllAmount,FSrcStockId.FName,FSrcStockLocId.FF100001.FName,FDestStockId.FName,F_ora_Base.FName,FTransferDirect.FCaption,F_ora_Text1,FSRCBILLTYPEID,FORDERTYPE.FName,FCreatorId.FName,FApproverId.FName,FAmount,F_ORA_ATTACHMENTCOUNT,FPrice,FOutJoinQty,F_ORA_TEXT3,F_ORA_QTY,FSECOUTJOINQTY,FExchangeRate,FExchangeTypeId.FName,FSETTLECURRID.FName,FBaseCurrId.FName,FApproveDate,F_ora_Base.FNumber,FStockOutOrgId.FName";
         LinkedList<String> queryFilters = new LinkedList<>();
 
@@ -76,7 +74,7 @@ public class SalesOrderTask {
         String filterStr = String.join(" and ", queryFilters);
         try {
 
-            getK3CloudData(SalesOrderEntity.class, filterStr, fieldKeys, salesOrderEntities, "STK_TransferDirect", "FApproveDate Desc");
+            getK3CloudData(SalesOrder.class, filterStr, fieldKeys, salesOrderEntities, "STK_TransferDirect", "FApproveDate Desc");
 
             // 处理获取到的所有数据
             SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
@@ -94,18 +92,17 @@ public class SalesOrderTask {
 
 
     @Async
-    @Scheduled(cron = "0 05 23 * * ? ")
     public void sendSales() {
         int page = 0;
         while (true) {
-            List<SalesOrderEntity> salesOrders = salesOrderService.getSalesOrders(todayString, todayString, page * 300, 300);
+            List<SalesOrder> salesOrders = salesOrderService.getSalesOrders(todayString, todayString, page * 300, 300);
             if (salesOrders.isEmpty()) {
                 log.info("氚云数据同步完成!");
                 break;
             }
 
             List<String> jsonArray = new ArrayList<String>();
-            for (SalesOrderEntity salesOrder : salesOrders) {
+            for (SalesOrder salesOrder : salesOrders) {
                 JSONObject jsonObject = new JSONObject();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(salesOrder.getModifyDate());
@@ -137,6 +134,16 @@ public class SalesOrderTask {
 
             page++;
         }
+    }
+
+    @Async
+    public void testTask() {
+        log.info("testTask1");
+    }
+
+    @Async
+    public void testTask2() {
+        log.info("testTask2");
     }
 }
 

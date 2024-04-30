@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cc.shunfu.bigdata.model.mapper.ReturnSalesOrderMapper">
-    <insert id="insertOrUpdateReturnSalesOrder" parameterType="cc.shunfu.bigdata.model.entity.ReturnSalesOrderEntity">
+<mapper namespace="cc.shunfu.bigdata.dto.mapper.ReturnSalesOrderMapper">
+    <insert id="insertOrUpdateReturnSalesOrder" parameterType="cc.shunfu.bigdata.dto.entity.ReturnSalesOrder">
         INSERT INTO return_sales_order
         (billNo, documentStatusCaption, approveDate, customerId, customerName,
          materialId, materialName, realQuantity, taxPrice, totalAmountLC, saleOrgName)
@@ -25,7 +25,7 @@
                                     VALUES(totalAmountLC),
                                 saleOrgName=values(saleOrgName)
     </insert>
-    <select id="getReturnSalesOrder" parameterType="map" resultType="cc.shunfu.bigdata.model.entity.ReturnSalesOrderEntity">
+    <select id="getReturnSalesOrder" parameterType="map" resultType="cc.shunfu.bigdata.dto.entity.ReturnSalesOrder">
         SELECT *
         FROM return_sales_order
         WHERE approveDate BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')

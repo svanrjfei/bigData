@@ -5,6 +5,7 @@ import cc.shunfu.bigdata.dto.entity.TripJobLock;
 import cc.shunfu.bigdata.dto.mapper.TripMapper;
 import cc.shunfu.bigdata.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private DynamicScheduleConfigurer dynamicScheduleConfigurer;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Override
     public void startTask(String taskId) {
@@ -53,19 +57,19 @@ public class TaskServiceImpl implements TaskService {
                         () -> {
                             try {
                                 Class<?> clazz = Class.forName("cc.shunfu.bigdata.task." + taskMethods[0]);
-                                // 获取方法
-                                Method method = clazz.getMethod(taskMethods[1]);
-                                // 创建类的实例
-                                Object obj = clazz.getDeclaredConstructor().newInstance();
-                                method.invoke(obj);
+
+                                Object bean = applicationContext.getBean(clazz);
+                                // 获取mybatis方法.形参是待执行方法名
+                                Method method = bean.getClass().getMethod(taskMethods[1]);
+                                // 执行方法
+                                method.invoke(bean);
+
                             } catch (ClassNotFoundException e) {
                                 throw new RuntimeException("Class not found: " + e.getMessage(), e);
                             } catch (InvocationTargetException e) {
                                 throw new RuntimeException("Exception occurred while invoking method: " + e.getMessage(), e);
                             } catch (NoSuchMethodException e) {
                                 throw new RuntimeException("Method not found: " + e.getMessage(), e);
-                            } catch (InstantiationException e) {
-                                throw new RuntimeException("Failed to instantiate class: " + e.getMessage(), e);
                             } catch (IllegalAccessException e) {
                                 throw new RuntimeException("Illegal access exception: " + e.getMessage(), e);
                             }

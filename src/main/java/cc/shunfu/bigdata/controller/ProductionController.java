@@ -2,12 +2,14 @@ package cc.shunfu.bigdata.controller;
 
 import cc.shunfu.bigdata.dto.entity.ProductionEfficiency;
 import cc.shunfu.bigdata.dto.vo.param.ReportingForWorkParams;
-import cc.shunfu.bigdata.service.ProductionService;
 import cc.shunfu.bigdata.dto.vo.result.Response;
-
+import cc.shunfu.bigdata.service.ProductionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 

@@ -138,12 +138,20 @@ public class SalesOrderTask {
 
     @Async
     public void testTask() {
-        log.info("testTask1");
+        List<SalesOrder> salesOrders = salesOrderMapper.getSalesOrders("2024-04-01", todayString, 0, 300);
+
+        salesOrders.forEach(salesOrder -> {
+            log.info(salesOrder.toString());
+        });
     }
 
     @Async
     public void testTask2() {
-        log.info("testTask2");
+        List<SalesOrder> salesOrders = salesOrderMapper.getSalesOrders("2024-03-01", "2024-03-30", 0, 300);
+
+        salesOrders.forEach(salesOrder -> {
+            log.info(salesOrder.toString());
+        });
     }
 }
 

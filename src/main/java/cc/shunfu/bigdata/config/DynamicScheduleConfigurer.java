@@ -1,10 +1,6 @@
 package cc.shunfu.bigdata.config;
 
-import cc.shunfu.bigdata.dto.mapper.TripMapper;
-import cc.shunfu.bigdata.service.TaskService;
 import cc.shunfu.bigdata.utils.BeanUtils;
-import org.apache.iotdb.tsfile.read.filter.operator.In;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.SchedulingException;
 import org.springframework.scheduling.TaskScheduler;
@@ -13,7 +9,6 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.config.TriggerTask;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

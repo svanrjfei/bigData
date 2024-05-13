@@ -21,5 +21,4 @@ CMD java \
     -jar /big_data.jar
 
 # 暴露容器的端口
-EXPOSE 9100
-
+EXPOSE 8200

@@ -8,6 +8,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 /**
  * @author svanrj
  * @version 1.0
@@ -25,8 +26,6 @@ public class InitTask implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         List<Integer> jobIdList = tripMapper.getJobIdList();
-        for (Integer id : jobIdList) {
-            taskService.startTask(id.toString());
-        }
+        jobIdList.forEach(id -> taskService.startTask(id.toString()));
     }
 }

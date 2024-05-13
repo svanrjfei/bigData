@@ -15,8 +15,6 @@ import java.util.List;
 
 @Mapper
 public interface SalesOrderMapper extends BaseMapper<SalesOrder> {
-    void batchInsertOrUpdateSalesOrders(List<SalesOrder> salesOrders);
-
     int insertOrUpdateSalesOrder(SalesOrder salesOrder);
 
     List<SalesOrder> getSalesOrders(

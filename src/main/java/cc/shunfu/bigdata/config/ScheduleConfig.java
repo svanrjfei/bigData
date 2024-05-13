@@ -25,4 +25,5 @@ public class ScheduleConfig {
         taskScheduler.setPoolSize(Runtime.getRuntime().availableProcessors() * 2);
         return taskScheduler;
     }
+
 }

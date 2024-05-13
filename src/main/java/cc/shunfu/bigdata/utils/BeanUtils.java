@@ -57,7 +57,7 @@ public class BeanUtils {
         if (field == null) {
             throw new NoSuchFieldException("no such field [" + name + "]");
         }
-        boolean accessible = field.isAccessible();
+        boolean accessible = field.canAccess(obj);
         field.setAccessible(true);
         try {
             value = field.get(obj);

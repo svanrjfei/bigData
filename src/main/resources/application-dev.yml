@@ -1,0 +1,85 @@
+server:
+  port: 8200
+
+mybatis-plus:
+  configuration:
+    mapUnderscoreToCamelCase: true
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    cc.shunfu.bigdata.model.mapper: DEBUG
+  config: classpath:logback.xml
+
+springdoc:
+  api-docs:
+    #是否开启文档功能
+    enabled: true
+    #swagger后端请求地址
+    path: /api-docs
+  swagger-ui:
+    #自定义swagger前端请求路径，输入http：127.0.0.1:8080/test会自动重定向到swagger页面
+    path: /api
+  packages-to-scan: cc.shunfu.bigdata.controller,cc.shunfu.bigdata.dao.entity
+
+spring:
+  iotdb:
+    username: root
+    password: root
+    ip: 114.96.121.87
+    port: 6667
+    maxSize: 100
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource #引入druid数据源
+    #数据源基本信息，也可放在druid下
+    url: jdbc:mysql://123.249.101.90:3310/big_data?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: svanrj
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    druid:
+      #SpringBoot因为默认是hikari数据源所以对于其他数据源默认是不注入这些属性的，需要手动配置
+
+
+      #druid数据源专有配置
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 600000
+      # 主要配置以上几个即可
+      timeBetweenEvictionRunsMillis: 600000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+
+      #配置监控统计拦截的filters：stat:监控统计、self4j(使用log4j的记得导入log4j的依赖）：日志记录、wall：防御sql注入 此处配置不能遗漏服务sql监控台不能监控sql
+
+      filter:
+        slf4j:
+          enabled: true
+        stat:
+          enabled: false
+          merge-sql: false
+          slow-sql-millis: 5000
+        wall:
+          enabled: true
+      #配置stat-view-servlet
+      stat-view-servlet:
+        enabled: true
+        allow: 127.0.0.1
+        url-pattern: /druid/*
+        login-username: admin
+        login-password: 123456
+        reset-enable: false
+      #配置web-stat-filter
+      web-stat-filter:
+        enabled: true
+      remove-abandoned: true
+      remove-abandoned-timeout: 180
+      log-abandoned: false
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher

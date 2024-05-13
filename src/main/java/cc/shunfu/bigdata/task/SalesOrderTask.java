@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -59,11 +60,10 @@ public class SalesOrderTask {
      * @date 2024/4/20
      */
 
-    @Async
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
     public void getSales() {
-
         List<SalesOrder> salesOrderEntities = new ArrayList<>();
-        String fieldKeys = "FId,FBILLNO,FDOCUMENTSTATUS.FCaption,FDATE,FMATERIALID.FNumber,FMaterialId.FName,FMODEL,FUnitID.FName,FQty,FConsignPrice,FConsignAmount,FTaxPrice,FAllAmount,FSrcStockId.FName,FSrcStockLocId.FF100001.FName,FDestStockId.FName,F_ora_Base.FName,FTransferDirect.FCaption,F_ora_Text1,FSRCBILLTYPEID,FORDERTYPE.FName,FCreatorId.FName,FApproverId.FName,FAmount,F_ORA_ATTACHMENTCOUNT,FPrice,FOutJoinQty,F_ORA_TEXT3,F_ORA_QTY,FSECOUTJOINQTY,FExchangeRate,FExchangeTypeId.FName,FSETTLECURRID.FName,FBaseCurrId.FName,FApproveDate,F_ora_Base.FNumber,FStockOutOrgId.FName";
+        String fieldKeys = "FBillEntry_FEntryId,FBILLNO,FDOCUMENTSTATUS.FCaption,FDATE,FMATERIALID.FNumber,FMaterialId.FName,FMODEL,FUnitID.FName,FQty,FConsignPrice,FConsignAmount,FTaxPrice,FAllAmount,FSrcStockId.FName,FSrcStockLocId.FF100001.FName,FDestStockId.FName,F_ora_Base.FName,FTransferDirect.FCaption,F_ora_Text1,FSRCBILLTYPEID,FORDERTYPE.FName,FCreatorId.FName,FApproverId.FName,FAmount,F_ORA_ATTACHMENTCOUNT,FPrice,FOutJoinQty,F_ORA_TEXT3,F_ORA_QTY,FSECOUTJOINQTY,FExchangeRate,FExchangeTypeId.FName,FSETTLECURRID.FName,FBaseCurrId.FName,FApproveDate,F_ora_Base.FNumber,FStockOutOrgId.FName";
         LinkedList<String> queryFilters = new LinkedList<>();
 
         queryFilters.add(String.format("FDestStockId.FName = '%s'", "客户仓"));
@@ -72,34 +72,36 @@ public class SalesOrderTask {
         queryFilters.add(String.format("FApproveDate >= '%s'", todayString + " 00:00:00"));
         queryFilters.add(String.format("FApproveDate <= '%s'", todayString + " 23:59:59"));
         String filterStr = String.join(" and ", queryFilters);
-        try {
+        // 处理获取到的所有数据
+
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
 
             getK3CloudData(SalesOrder.class, filterStr, fieldKeys, salesOrderEntities, "STK_TransferDirect", "FApproveDate Desc");
 
-            // 处理获取到的所有数据
-            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
             SalesOrderMapper salesOrderMapperNew = sqlSession.getMapper(SalesOrderMapper.class);
             salesOrderEntities.forEach(salesOrderMapperNew::insertOrUpdateSalesOrder);
             sqlSession.commit();
             sqlSession.clearCache();
 
-            log.info("K3Cloud数据同步完成!");
+            log.info("K3Cloud数据同步完成!" + "共同步" + salesOrderEntities.size() + "条数据");
 
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
         }
     }
 
-
-    @Async
     public void sendSales() {
         int page = 0;
+        int count = 0;
         while (true) {
-            List<SalesOrder> salesOrders = salesOrderService.getSalesOrders(todayString, todayString, page * 300, 300);
+            List<SalesOrder> salesOrders = salesOrderService.getSalesOrders(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
+
             if (salesOrders.isEmpty()) {
-                log.info("氚云数据同步完成!");
+                log.info("氚云数据同步完成!" + "共同步" + count + "条数据");
                 break;
             }
+            count += salesOrders.size();
 
             List<String> jsonArray = new ArrayList<String>();
             for (SalesOrder salesOrder : salesOrders) {
@@ -136,22 +138,12 @@ public class SalesOrderTask {
         }
     }
 
-    @Async
     public void testTask() {
-        List<SalesOrder> salesOrders = salesOrderMapper.getSalesOrders("2024-04-01", todayString, 0, 300);
-
-        salesOrders.forEach(salesOrder -> {
-            log.info(salesOrder.toString());
-        });
+        log.info("任务测试");
     }
 
-    @Async
     public void testTask2() {
-        List<SalesOrder> salesOrders = salesOrderMapper.getSalesOrders("2024-03-01", "2024-03-30", 0, 300);
-
-        salesOrders.forEach(salesOrder -> {
-            log.info(salesOrder.toString());
-        });
+        log.info("任务测试2");
     }
 }
 

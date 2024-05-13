@@ -3,9 +3,9 @@
 <mapper namespace="cc.shunfu.bigdata.dto.mapper.ReturnSalesOrderMapper">
     <insert id="insertOrUpdateReturnSalesOrder" parameterType="cc.shunfu.bigdata.dto.entity.ReturnSalesOrder">
         INSERT INTO return_sales_order
-        (billNo, documentStatusCaption, approveDate, customerId, customerName,
+        (id, billNo, documentStatusCaption, approveDate, customerId, customerName,
          materialId, materialName, realQuantity, taxPrice, totalAmountLC, saleOrgName)
-        VALUES (#{billNo}, #{documentStatusCaption}, #{approveDate}, #{customerId}, #{customerName},
+        VALUES (#{id}, #{billNo}, #{documentStatusCaption}, #{approveDate}, #{customerId}, #{customerName},
                 #{materialId}, #{materialName}, #{realQuantity}, #{taxPrice}, #{totalAmountLC}, #{saleOrgName})
         on duplicate key update documentStatusCaption =
                                     VALUES(documentStatusCaption),
@@ -28,7 +28,7 @@
     <select id="getReturnSalesOrder" parameterType="map" resultType="cc.shunfu.bigdata.dto.entity.ReturnSalesOrder">
         SELECT *
         FROM return_sales_order
-        WHERE approveDate BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d')
+        WHERE approveDate BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
         ORDER BY approveDate DESC
         LIMIT #{offset}, #{limit}
     </select>

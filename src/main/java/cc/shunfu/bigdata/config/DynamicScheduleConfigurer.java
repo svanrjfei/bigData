@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledFuture;
 public class DynamicScheduleConfigurer implements SchedulingConfigurer {
     private ScheduledTaskRegistrar taskRegistrar;
     private Set<ScheduledFuture<?>> scheduledFutures = null;
-    private Map<String, ScheduledFuture<?>> taskFutures = new ConcurrentHashMap<>();
+    private final Map<String, ScheduledFuture<?>> taskFutures = new ConcurrentHashMap<>();
 
 
 
@@ -54,7 +54,10 @@ public class DynamicScheduleConfigurer implements SchedulingConfigurer {
             throw new SchedulingException("the taskId[" + taskId + "] was added.");
         }
         TaskScheduler scheduler = taskRegistrar.getScheduler();
-        ScheduledFuture<?> future = scheduler.schedule(triggerTask.getRunnable(), triggerTask.getTrigger());
+        ScheduledFuture<?> future = null;
+        if (scheduler != null) {
+            future = scheduler.schedule(triggerTask.getRunnable(), triggerTask.getTrigger());
+        }
         getScheduledFutures().add(future);
         taskFutures.put(taskId, future);
     }

@@ -85,15 +85,13 @@ public class ChuanUtils {
             while ((str = br.readLine()) != null) {
 
             }
-//            log.info(result);
-//            log.info(json);
-            log.info("氚云数据更新成功");
             // 关闭流
             is.close();
             // 断开连接，disconnect是在底层tcp socket链接空闲时才切断，如果正在被其他线程使用就不切断。
             conn.disconnect();
 
         } catch (Exception e) {
+            log.error("调用第三方接口异常：" + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -104,6 +102,7 @@ public class ChuanUtils {
                     br.close();
                 }
             } catch (IOException e) {
+                log.error("关闭流异常：" + e.getMessage());
                 e.printStackTrace();
             }
         }

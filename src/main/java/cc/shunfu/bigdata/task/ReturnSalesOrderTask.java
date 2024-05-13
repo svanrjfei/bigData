@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -54,12 +55,10 @@ public class ReturnSalesOrderTask {
      * @author svanrj
      * @date 2024/4/20
      */
-
-    @Async
     public void getReturnSales() {
         List<ReturnSalesOrder> salesOrderEntities = new ArrayList<>();
 
-        String fieldKeys = "FId,FBillNo,FDocumentStatus.FCaption,FApproveDate,FRetcustId.FNumber,FRetcustId.FName,FMaterialId.FNumber,FMaterialId.FName,FRealQty,FTaxPrice,FAllAmount_LC,FSaleOrgId.FName";
+        String fieldKeys = "FEntity_FEntryId,FBillNo,FDocumentStatus.FCaption,FApproveDate,FRetcustId.FNumber,FRetcustId.FName,FMaterialId.FNumber,FMaterialId.FName,FRealQty,FTaxPrice,FAllAmount_LC,FSaleOrgId.FName";
         LinkedList<String> queryFilters = new LinkedList<>();
 
         queryFilters.add(String.format("FDocumentStatus = '%s'", "C"));
@@ -67,17 +66,17 @@ public class ReturnSalesOrderTask {
         queryFilters.add(String.format("FApproveDate >= '%s'", todayString + " 00:00:00"));
         queryFilters.add(String.format("FApproveDate <= '%s'", todayString + " 23:59:59"));
         String filterStr = String.join(" and ", queryFilters);
-        try {
+
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
 
             getK3CloudData(ReturnSalesOrder.class, filterStr, fieldKeys, salesOrderEntities, "SAL_RETURNSTOCK", "FApproveDate Desc");
 
             // 处理获取到的所有数据
-            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
             ReturnSalesOrderMapper returnSalesOrderMapper = sqlSession.getMapper(ReturnSalesOrderMapper.class);
             salesOrderEntities.forEach(returnSalesOrderMapper::insertOrUpdateReturnSalesOrder);
             sqlSession.commit();
             sqlSession.clearCache();
-            log.info("K3Cloud数据同步完成!");
+            log.info("K3Cloud数据同步完成!" + "共同步" + salesOrderEntities.size() + "条数据");
 
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -85,15 +84,16 @@ public class ReturnSalesOrderTask {
     }
 
 
-    @Async
     public void sendReturnSales() {
         int page = 0;
+        int count = 0;
         while (true) {
-            List<ReturnSalesOrder> ReturnRalesOrders = salesOrderService.getReturnSalesOrders(todayString, todayString, page * 300, 300);
+            List<ReturnSalesOrder> ReturnRalesOrders = salesOrderService.getReturnSalesOrders(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
             if (ReturnRalesOrders.isEmpty()) {
-                log.info("氚云数据同步完成!");
+                log.info("氚云数据同步完成!" + "共同步" + count + "条数据");
                 break;
             }
+            count += ReturnRalesOrders.size();
 
             List<String> jsonArray = new ArrayList<>();
             for (ReturnSalesOrder returnSalesOrder : ReturnRalesOrders) {

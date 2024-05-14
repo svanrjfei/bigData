@@ -7,9 +7,8 @@ mybatis-plus:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
-  level:
-    cc.shunfu.bigdata.model.mapper: DEBUG
-  config: classpath:logback.xml
+  group:
+  config: classpath:logback-spring.xml
 
 springdoc:
   api-docs:

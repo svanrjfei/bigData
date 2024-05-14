@@ -9,7 +9,7 @@ public class TaskTest {
 
     @Test
     public void test() {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("logback.xml");
+        URL url = Thread.currentThread().getContextClassLoader().getResource("logback-spring.xml");
         if (url == null) {
             System.out.println("logback.xml配置文件不存在");
         } else {

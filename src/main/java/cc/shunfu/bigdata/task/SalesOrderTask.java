@@ -60,7 +60,6 @@ public class SalesOrderTask {
      * @date 2024/4/20
      */
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
     public void getSales() {
         List<SalesOrder> salesOrderEntities = new ArrayList<>();
         String fieldKeys = "FBillEntry_FEntryId,FBILLNO,FDOCUMENTSTATUS.FCaption,FDATE,FMATERIALID.FNumber,FMaterialId.FName,FMODEL,FUnitID.FName,FQty,FConsignPrice,FConsignAmount,FTaxPrice,FAllAmount,FSrcStockId.FName,FSrcStockLocId.FF100001.FName,FDestStockId.FName,F_ora_Base.FName,FTransferDirect.FCaption,F_ora_Text1,FSRCBILLTYPEID,FORDERTYPE.FName,FCreatorId.FName,FApproverId.FName,FAmount,F_ORA_ATTACHMENTCOUNT,FPrice,FOutJoinQty,F_ORA_TEXT3,F_ORA_QTY,FSECOUTJOINQTY,FExchangeRate,FExchangeTypeId.FName,FSETTLECURRID.FName,FBaseCurrId.FName,FApproveDate,F_ora_Base.FNumber,FStockOutOrgId.FName";
@@ -91,11 +90,12 @@ public class SalesOrderTask {
         }
     }
 
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
     public void sendSales() {
         int page = 0;
         int count = 0;
         while (true) {
-            List<SalesOrder> salesOrders = salesOrderService.getSalesOrders(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
+            List<SalesOrder> salesOrders = salesOrderService.getSalesOrders("2024-05-12" + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
 
             if (salesOrders.isEmpty()) {
                 log.info("氚云数据同步完成!" + "共同步" + count + "条数据");
@@ -132,7 +132,7 @@ public class SalesOrderTask {
             String CreateStr = JSONObject.valueToString(paramMap);
 
             // 请求接口
-            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
+//            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
 
             page++;
         }

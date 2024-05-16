@@ -2,10 +2,8 @@ package cc.shunfu.bigdata.task;
 
 import cc.shunfu.bigdata.dto.entity.CrmRxConfig;
 import cc.shunfu.bigdata.dto.entity.ProcessOutput;
-import cc.shunfu.bigdata.dto.entity.Warehouse;
 import cc.shunfu.bigdata.dto.mapper.CrmRxConfigMapper;
 import cc.shunfu.bigdata.dto.mapper.ProcessOutputMapper;
-import cc.shunfu.bigdata.dto.mapper.WarehouseMapper;
 import cc.shunfu.bigdata.dto.vo.result.ProcessOutputVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.log4j.Log4j2;
@@ -14,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cc.shunfu.bigdata.utils.ChuanUtils.doPost;
 import static cc.shunfu.bigdata.utils.DateUtils.formatDate;

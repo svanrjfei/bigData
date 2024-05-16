@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Data
 @TableName("crm_rx_config")
+@Component
 public class CrmRxConfig {
     @TableId("ObjectId")
     private String objectId;

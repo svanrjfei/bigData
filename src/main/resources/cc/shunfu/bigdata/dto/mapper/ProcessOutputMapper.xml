@@ -1,0 +1,40 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.shunfu.bigdata.dto.mapper.ProcessOutputMapper">
+    <select id="getProcessOutput" resultType="cc.shunfu.bigdata.dto.entity.ProcessOutput">
+        select Sku,
+        SkuName,
+        Qty,
+        Lottable02,
+        AreaCode,
+        type
+        from process_output
+        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        <if test="areaCode != null">
+            and AreaCode = #{areaCode}
+        </if>
+        ORDER BY Lottable02 DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    <select id="getProcessOutputByType" resultType="cc.shunfu.bigdata.dto.vo.result.ProcessOutputVO">
+        select
+        DATE(Lottable02) AS date,
+        AreaCode,
+        depa,
+        SUM(mold_closing_cost * Qty) AS total_mold_closing_cost,
+        SUM(friction_welding * Qty) AS total_friction_welding,
+        SUM(cleaning * Qty) AS total_cleaning,
+        SUM(side_leakage * Qty) AS total_side_leakage,
+        SUM(assembly_cost * Qty) AS total_assemble_cost,
+        SUM(machine_addition * Qty) AS total_machine_addition
+        from process_output
+        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        <if test="areaCode != null">
+            and AreaCode = #{areaCode}
+        </if>
+        <if test="type != null">
+            and depa=#{type}
+        </if>
+        GROUP BY depa,Date(Lottable02)
+        ORDER BY Date(Lottable02) DESC
+    </select>
+</mapper>

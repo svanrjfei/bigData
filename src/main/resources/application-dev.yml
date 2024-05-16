@@ -7,7 +7,6 @@ mybatis-plus:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
-  group:
   config: classpath:logback-spring.xml
 
 springdoc:
@@ -31,7 +30,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource #引入druid数据源
     #数据源基本信息，也可放在druid下
-    url: jdbc:mysql://123.249.101.90:3310/big_data?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://123.249.101.90:3310/big_data?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: svanrj
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -64,6 +63,8 @@ spring:
           merge-sql: false
           slow-sql-millis: 5000
         wall:
+          config:
+            strict-syntax-check: false
           enabled: true
       #配置stat-view-servlet
       stat-view-servlet:

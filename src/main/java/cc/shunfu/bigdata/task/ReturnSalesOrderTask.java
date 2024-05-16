@@ -40,8 +40,7 @@ public class ReturnSalesOrderTask {
     SalesOrderService salesOrderService;
 
     private SqlSessionFactory sqlSessionFactory;
-    final LocalDateTime today = LocalDateTime.now();
-    final String todayString = formatDateTime(today, "yyyy-MM-dd");
+
 
     @Autowired
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
@@ -55,7 +54,11 @@ public class ReturnSalesOrderTask {
      * @author svanrj
      * @date 2024/4/20
      */
+    @Async
     public void getReturnSales() {
+        final LocalDateTime today = LocalDateTime.now();
+        final String todayString = formatDateTime(today, "yyyy-MM-dd");
+        
         List<ReturnSalesOrder> salesOrderEntities = new ArrayList<>();
 
         String fieldKeys = "FEntity_FEntryId,FBillNo,FDocumentStatus.FCaption,FApproveDate,FRetcustId.FNumber,FRetcustId.FName,FMaterialId.FNumber,FMaterialId.FName,FRealQty,FTaxPrice,FAllAmount_LC,FSaleOrgId.FName";
@@ -84,7 +87,11 @@ public class ReturnSalesOrderTask {
     }
 
 
+    @Async
     public void sendReturnSales() {
+        final LocalDateTime today = LocalDateTime.now();
+        final String todayString = formatDateTime(today, "yyyy-MM-dd");
+
         int page = 0;
         int count = 0;
         while (true) {

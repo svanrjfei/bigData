@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper
 public interface WarehouseMapper {
 
-    @Select("select Sku,SkuName,Qty,Lottable02,AreaCode from inventory left join area on inventory.WhseId=area.Id WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s') " +
+    @Select("select Sku,SkuName,Qty,Lottable02,AreaCode from inventory left join area on inventory.AreaId=area.Id WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s') " +
             "  and AreaCode=#{areaCode}     ORDER BY Lottable02 DESC " +
             "        LIMIT #{offset}, #{limit}")
     List<Warehouse> getWarehouses(

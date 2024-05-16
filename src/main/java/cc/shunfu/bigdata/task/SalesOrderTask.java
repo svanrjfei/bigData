@@ -43,8 +43,6 @@ public class SalesOrderTask {
     SalesOrderService salesOrderService;
 
     private SqlSessionFactory sqlSessionFactory;
-    final LocalDateTime today = LocalDateTime.now();
-    final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
 
     @Autowired
@@ -59,8 +57,11 @@ public class SalesOrderTask {
      * @author svanrj
      * @date 2024/4/20
      */
-
+    @Async
     public void getSales() {
+        final LocalDateTime today = LocalDateTime.now();
+        final String todayString = formatDateTime(today, "yyyy-MM-dd");
+
         List<SalesOrder> salesOrderEntities = new ArrayList<>();
         String fieldKeys = "FBillEntry_FEntryId,FBILLNO,FDOCUMENTSTATUS.FCaption,FDATE,FMATERIALID.FNumber,FMaterialId.FName,FMODEL,FUnitID.FName,FQty,FConsignPrice,FConsignAmount,FTaxPrice,FAllAmount,FSrcStockId.FName,FSrcStockLocId.FF100001.FName,FDestStockId.FName,F_ora_Base.FName,FTransferDirect.FCaption,F_ora_Text1,FSRCBILLTYPEID,FORDERTYPE.FName,FCreatorId.FName,FApproverId.FName,FAmount,F_ORA_ATTACHMENTCOUNT,FPrice,FOutJoinQty,F_ORA_TEXT3,F_ORA_QTY,FSECOUTJOINQTY,FExchangeRate,FExchangeTypeId.FName,FSETTLECURRID.FName,FBaseCurrId.FName,FApproveDate,F_ora_Base.FNumber,FStockOutOrgId.FName";
         LinkedList<String> queryFilters = new LinkedList<>();
@@ -73,6 +74,7 @@ public class SalesOrderTask {
         String filterStr = String.join(" and ", queryFilters);
         // 处理获取到的所有数据
 
+
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
 
             getK3CloudData(SalesOrder.class, filterStr, fieldKeys, salesOrderEntities, "STK_TransferDirect", "FApproveDate Desc");
@@ -83,19 +85,21 @@ public class SalesOrderTask {
             sqlSession.clearCache();
 
             log.info("K3Cloud数据同步完成!" + "共同步" + salesOrderEntities.size() + "条数据");
+            log.info("----------------------------------------------------------------------------------------------------------------");
 
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
+    @Async
     public void sendSales() {
         int page = 0;
         int count = 0;
+        final LocalDateTime today = LocalDateTime.now();
+        final String todayString = formatDateTime(today, "yyyy-MM-dd");
         while (true) {
-            List<SalesOrder> salesOrders = salesOrderService.getSalesOrders("2024-05-12" + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
+            List<SalesOrder> salesOrders = salesOrderService.getSalesOrders(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
 
             if (salesOrders.isEmpty()) {
                 log.info("氚云数据同步完成!" + "共同步" + count + "条数据");
@@ -103,7 +107,7 @@ public class SalesOrderTask {
             }
             count += salesOrders.size();
 
-            List<String> jsonArray = new ArrayList<String>();
+            List<String> jsonArray = new ArrayList<>();
             for (SalesOrder salesOrder : salesOrders) {
                 JSONObject jsonObject = new JSONObject();
                 Calendar calendar = Calendar.getInstance();
@@ -132,16 +136,18 @@ public class SalesOrderTask {
             String CreateStr = JSONObject.valueToString(paramMap);
 
             // 请求接口
-//            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
+            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
 
             page++;
         }
     }
 
+    @Async
     public void testTask() {
         log.info("任务测试");
     }
 
+    @Async
     public void testTask2() {
         log.info("任务测试2");
     }

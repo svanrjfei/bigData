@@ -24,8 +24,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     /**
      * 解决resources下面静态资源无法访问
-     *
-     * @param registry
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

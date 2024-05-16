@@ -4,7 +4,7 @@ server:
 mybatis-plus:
   configuration:
     mapUnderscoreToCamelCase: true
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
   config: classpath:logback-spring.xml
@@ -21,6 +21,8 @@ springdoc:
   packages-to-scan: cc.shunfu.bigdata.controller,cc.shunfu.bigdata.dao.entity
 
 spring:
+  jackson:
+    time-zone: GMT+8
   iotdb:
     username: root
     password: root
@@ -30,15 +32,13 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource #引入druid数据源
     #数据源基本信息，也可放在druid下
-    url: jdbc:mysql://123.249.101.90:3310/big_data?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/big_data?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: svanrj
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
     druid:
       #SpringBoot因为默认是hikari数据源所以对于其他数据源默认是不注入这些属性的，需要手动配置
-
-
       #druid数据源专有配置
       initialSize: 5
       minIdle: 5

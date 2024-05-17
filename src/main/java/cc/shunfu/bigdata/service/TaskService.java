@@ -1,5 +1,6 @@
 package cc.shunfu.bigdata.service;
 
+import cc.shunfu.bigdata.dto.entity.TripJobLock;
 import org.springframework.stereotype.Service;
 
 /**
@@ -50,4 +51,14 @@ public interface TaskService {
      */
 
     void runTask(String taskId);
+
+    /**
+     * 增加一个任务
+     *
+     * @param tripJobLock 任务信息
+     * @return int 任务id
+     * @author svanrj
+     * @date 2024/5/17
+     */
+    int addTask(TripJobLock tripJobLock);
 }

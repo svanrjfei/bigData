@@ -63,7 +63,7 @@ public class StorageTask {
 
         // 利用循环分页获取数据，避免数据量过大导致内存溢出
         while (true) {
-            List<ProcessOutput> processOutputs = processOutputMapper.getProcessOutput(todayString+ " 00:00:00", todayString + " 23:59:59", page * 300, 300, "CPK");
+            List<ProcessOutput> processOutputs = processOutputMapper.getProcessOutput(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300, "CPK");
 
 //            判断数据是否获取完成
             if (processOutputs.isEmpty()) {

@@ -105,11 +105,16 @@ public class TaskServiceImpl implements TaskService {
         }
 
 //        提取要执行的方法
-        String cronExpression = tripJobLockEntity.getJobCron(); // 获取cron表达式
         String taskClass = tripJobLockEntity.getMethod(); // 获取任务ID
         String[] taskMethods = taskClass.split("\\.");
 
         runClassMethods(taskMethods);
+    }
+
+    @Override
+    public int addTask(TripJobLock tripJobLock) {
+        tripMapper.insert(tripJobLock);
+        return tripJobLock.getId();
     }
 
     private void runClassMethods(String[] taskMethods) {

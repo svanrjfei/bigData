@@ -96,7 +96,7 @@ public class StorageTask {
             String CreateStr = JSONObject.valueToString(paramMap);
 
             // 请求接口
-//            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
+            doPost("https://www.h3yun.com/OpenApi/Invoke", CreateStr);
 
             page++; // 翻页
         }

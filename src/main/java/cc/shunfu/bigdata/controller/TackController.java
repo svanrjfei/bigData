@@ -25,28 +25,28 @@ public class TackController {
 
     @Operation(summary = "启动任务")
     @PostMapping("/startTask/{taskId}")
-    public Response startTask(@PathVariable(required = true) String taskId) {
+    public Response startTask(@PathVariable String taskId) {
         taskService.startTask(taskId);
         return Response.success(taskId + "：启动成功", null);
     }
 
     @Operation(summary = "停止任务")
     @PostMapping("/stopTask/{taskId}")
-    public Response stopTask(@PathVariable(required = true) String taskId) {
+    public Response stopTask(@PathVariable String taskId) {
         taskService.stopTask(taskId);
         return Response.success(taskId + "：已停止", null);
     }
 
     @Operation(summary = "重启任务")
     @PostMapping("/restartTask/{taskId}")
-    public Response restartTask(@PathVariable(required = true) String taskId) {
+    public Response restartTask(@PathVariable String taskId) {
         taskService.restartTask(taskId);
         return Response.success(taskId + "：已重启", null);
     }
 
     @Operation(summary = "立即运行一个任务")
     @PostMapping("/runTask/{taskId}")
-    public Response runTask(@PathVariable(required = true) String taskId) {
+    public Response runTask(@PathVariable String taskId) {
         taskService.runTask(taskId);
         return Response.success(taskId + "：运行成功", null);
     }

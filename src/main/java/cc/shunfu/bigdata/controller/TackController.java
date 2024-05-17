@@ -44,4 +44,11 @@ public class TackController {
         taskService.restartTask(taskId);
         return Response.success(taskId + "：已重启", null);
     }
+
+    @Operation(summary = "立即允许一个项目")
+    @PostMapping("/runTask/{taskId}")
+    public Response runTask(@PathVariable(required = true) String taskId) {
+        taskService.runTask(taskId);
+        return Response.success(taskId + "：运行成功", null);
+    }
 }

@@ -35,16 +35,23 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void startTask(String taskId) {
+
+//        获取数据库任务信息
         TripJobLock tripJobLockEntity = tripMapper.selectById(taskId);
         if (tripJobLockEntity == null) {
             throw new RuntimeException("任务不存在");
         }
+
+//        更新任务信息状态
         tripJobLockEntity.setIsLock("1");
         tripMapper.updateById(tripJobLockEntity);
 
+//        提取要执行的方法
         String cronExpression = tripJobLockEntity.getJobCron(); // 获取cron表达式
         String taskClass = tripJobLockEntity.getMethod(); // 获取任务ID
         String[] taskMethods = taskClass.split("\\.");
+
+//        判断定时任务配置是否初始化完成
         while (!dynamicScheduleConfigurer.inited()) {
             try {
                 Thread.sleep(100);
@@ -52,27 +59,12 @@ public class TaskServiceImpl implements TaskService {
                 throw new RuntimeException(e);
             }
         }
+
+//        添加定时任务
         dynamicScheduleConfigurer.addTriggerTask(taskId,
                 new TriggerTask(
                         () -> {
-                            try {
-                                Class<?> clazz = Class.forName("cc.shunfu.bigdata.task." + taskMethods[0]);
-
-                                Object bean = applicationContext.getBean(clazz);
-                                // 获取mybatis方法.形参是待执行方法名
-                                Method method = bean.getClass().getMethod(taskMethods[1]);
-                                // 执行方法
-                                method.invoke(bean);
-
-                            } catch (ClassNotFoundException e) {
-                                throw new RuntimeException("Class not found: " + e.getMessage(), e);
-                            } catch (InvocationTargetException e) {
-                                throw new RuntimeException("Exception occurred while invoking method: " + e.getMessage(), e);
-                            } catch (NoSuchMethodException e) {
-                                throw new RuntimeException("Method not found: " + e.getMessage(), e);
-                            } catch (IllegalAccessException e) {
-                                throw new RuntimeException("Illegal access exception: " + e.getMessage(), e);
-                            }
+                            runClassMethods(taskMethods);
                         },
                         new CronTrigger(cronExpression)));
 
@@ -103,4 +95,47 @@ public class TaskServiceImpl implements TaskService {
             tripMapper.updateById(tripJobLockEntity);
         }
     }
+
+    @Override
+    public void runTask(String taskId) {
+        //        获取数据库任务信息
+        TripJobLock tripJobLockEntity = tripMapper.selectById(taskId);
+        if (tripJobLockEntity == null) {
+            throw new RuntimeException("任务不存在");
+        }
+
+//        提取要执行的方法
+        String cronExpression = tripJobLockEntity.getJobCron(); // 获取cron表达式
+        String taskClass = tripJobLockEntity.getMethod(); // 获取任务ID
+        String[] taskMethods = taskClass.split("\\.");
+
+        runClassMethods(taskMethods);
+    }
+
+    private void runClassMethods(String[] taskMethods) {
+        try {
+            // 通过反射获取类
+            Class<?> clazz = Class.forName("cc.shunfu.bigdata.task." + taskMethods[0]);
+
+            // 初始化Bean
+            Object bean = applicationContext.getBean(clazz);
+
+            // 获取具体要执行的方法
+            Method method = bean.getClass().getMethod(taskMethods[1]);
+
+            // 执行方法
+            method.invoke(bean);
+
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Class not found: " + e.getMessage(), e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("Exception occurred while invoking method: " + e.getMessage(), e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Method not found: " + e.getMessage(), e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Illegal access exception: " + e.getMessage(), e);
+        }
+    }
+
+
 }

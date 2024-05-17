@@ -63,7 +63,7 @@ public class StorageTask {
 
         // 利用循环分页获取数据，避免数据量过大导致内存溢出
         while (true) {
-            List<ProcessOutput> processOutputs = processOutputMapper.getProcessOutput("2024-05-01" + " 00:00:00", todayString + " 23:59:59", page * 300, 300, "CPK");
+            List<ProcessOutput> processOutputs = processOutputMapper.getProcessOutput(todayString+ " 00:00:00", todayString + " 23:59:59", page * 300, 300, "CPK");
 
 //            判断数据是否获取完成
             if (processOutputs.isEmpty()) {
@@ -116,7 +116,7 @@ public class StorageTask {
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
 //        获取今日的入库数据
-        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType("2024-04-01" + " 00:00:00", todayString + " 23:59:59", "CPK", "汽车");
+        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", "CPK", "汽车");
 
         List<String> jsonArray = new ArrayList<>();
 //        遍历获取到的数据
@@ -180,7 +180,7 @@ public class StorageTask {
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
-        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType("2024-04-01" + " 00:00:00", todayString + " 23:59:59", "CPK", "储能");
+        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", "CPK", "储能");
 
         Map<String, Object> paramMap = CyCreate(processOutputs, "D283959swokafnoxwuyxif8jpilk", "储能");
         String CreateStr = JSONObject.valueToString(paramMap);
@@ -202,7 +202,7 @@ public class StorageTask {
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
-        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType("2024-04-01" + " 00:00:00", todayString + " 23:59:59", "CPK", "通用");
+        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", "CPK", "通用");
 
         Map<String, Object> paramMap = CyCreate(processOutputs, "D283959szcujforrpeycmctp2u8e", "通用");
         String CreateStr = JSONObject.valueToString(paramMap);

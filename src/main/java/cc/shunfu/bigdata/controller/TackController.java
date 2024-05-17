@@ -1,14 +1,13 @@
 package cc.shunfu.bigdata.controller;
 
+import cc.shunfu.bigdata.dto.entity.TripJobLock;
 import cc.shunfu.bigdata.dto.vo.result.Response;
 import cc.shunfu.bigdata.service.TaskService;
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author svanrj
@@ -45,10 +44,21 @@ public class TackController {
         return Response.success(taskId + "：已重启", null);
     }
 
-    @Operation(summary = "立即允许一个项目")
+    @Operation(summary = "立即运行一个任务")
     @PostMapping("/runTask/{taskId}")
     public Response runTask(@PathVariable(required = true) String taskId) {
         taskService.runTask(taskId);
         return Response.success(taskId + "：运行成功", null);
+    }
+
+    @Operation(summary = "增加一个任务")
+    @PostMapping("/addTask")
+    public Response addTask(@RequestBody TripJobLock tripJobLock) {
+        int taskId = taskService.addTask(tripJobLock);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("taskId", taskId);
+
+        return Response.success("增加任务成功", jsonObject);
     }
 }

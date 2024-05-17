@@ -112,6 +112,12 @@ public class TaskServiceImpl implements TaskService {
         runClassMethods(taskMethods);
     }
 
+    @Override
+    public int addTask(TripJobLock tripJobLock) {
+        tripMapper.insert(tripJobLock);
+        return tripJobLock.getId();
+    }
+
     private void runClassMethods(String[] taskMethods) {
         try {
             // 通过反射获取类

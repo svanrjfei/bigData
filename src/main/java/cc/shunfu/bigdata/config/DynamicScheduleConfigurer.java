@@ -74,13 +74,6 @@ public class DynamicScheduleConfigurer implements SchedulingConfigurer {
         getScheduledFutures().remove(future);
     }
 
-    /**
-     * 重置任务
-     */
-    public void resetTriggerTask(String taskId, TriggerTask triggerTask) {
-        cancelTriggerTask(taskId);
-        addTriggerTask(taskId, triggerTask);
-    }
 
     /**
      * 任务编号

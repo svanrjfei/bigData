@@ -90,4 +90,17 @@ public class TaskServiceImpl implements TaskService {
             throw new RuntimeException("任务未启动");
         }
     }
+
+    @Override
+    public void restartTask(String taskId) {
+        if (dynamicScheduleConfigurer.hasTask(taskId)) {
+            stopTask(taskId);
+            startTask(taskId);
+        } else {
+            TripJobLock tripJobLockEntity = tripMapper.selectById(taskId);
+            startTask(taskId);
+            tripJobLockEntity.setIsLock("0");
+            tripMapper.updateById(tripJobLockEntity);
+        }
+    }
 }

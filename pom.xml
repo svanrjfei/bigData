@@ -106,6 +106,12 @@
             <artifactId>druid-spring-boot-3-starter</artifactId>
             <version>1.2.18</version>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.3.3</version>
+            <scope>test</scope>
+        </dependency>s
     </dependencies>
 
     <build>

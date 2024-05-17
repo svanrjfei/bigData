@@ -14,4 +14,6 @@ public interface TaskService {
     public void startTask(String taskId);
 
     public void stopTask(String taskId);
+
+    public void restartTask(String taskId);
 }

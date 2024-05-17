@@ -37,4 +37,11 @@ public class TackController {
         taskService.stopTask(taskId);
         return Response.success(taskId + "：已停止", null);
     }
+
+    @Operation(summary = "重启任务")
+    @PostMapping("/restartTask/{taskId}")
+    public Response restartTask(@PathVariable(required = true) String taskId) {
+        taskService.restartTask(taskId);
+        return Response.success(taskId + "：已重启", null);
+    }
 }

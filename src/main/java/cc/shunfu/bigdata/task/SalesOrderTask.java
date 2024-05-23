@@ -85,8 +85,6 @@ public class SalesOrderTask {
             sqlSession.clearCache();
 
             log.info("K3Cloud数据同步完成!" + "共同步" + salesOrderEntities.size() + "条数据");
-            log.info("----------------------------------------------------------------------------------------------------------------");
-
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

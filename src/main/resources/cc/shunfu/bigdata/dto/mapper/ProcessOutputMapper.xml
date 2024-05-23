@@ -6,12 +6,15 @@
         Qty,
         Lottable02,
         AreaCode,
-        type
+        type,
+        id
         from process_output
-        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
-        <if test="areaCode != null">
-            and AreaCode = #{areaCode}
-        </if>
+        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d
+        %H:%i:%s')
+        and AreaCode in
+        <foreach collection="areaCodes" item="areaCode" index="index" open="(" close=")" separator=",">
+            #{areaCode}
+        </foreach>
         ORDER BY Lottable02 DESC
         LIMIT #{offset}, #{limit}
     </select>
@@ -27,14 +30,17 @@
         SUM(assembly_cost * Qty) AS total_assemble_cost,
         SUM(machine_addition * Qty) AS total_machine_addition
         from process_output
-        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
-        <if test="areaCode != null">
-            and AreaCode = #{areaCode}
-        </if>
+        WHERE Lottable02 BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d
+        %H:%i:%s')
+        and AreaCode in
+        <foreach collection="areaCodes" item="areaCode" index="index" open="(" close=")" separator=",">
+            #{areaCode}
+        </foreach>
+
         <if test="type != null">
             and depa=#{type}
         </if>
-        GROUP BY depa,Date(Lottable02)
+        GROUP BY depa,Date(Lottable02),AreaCode
         ORDER BY Date(Lottable02) DESC
     </select>
 </mapper>

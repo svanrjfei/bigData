@@ -21,10 +21,10 @@ public interface ProcessOutputMapper extends BaseMapper<ProcessOutput> {
                                          @Param("endDate") String endDate,
                                          @Param("offset") int offset,
                                          @Param("limit") int limit,
-                                         @Param("areaCode") String areaCode);
+                                         @Param("areaCodes") String[] areaCodes);
 
     List<ProcessOutputVO> getProcessOutputByType(@Param("startDate") String startDate,
                                                  @Param("endDate") String endDate,
-                                                 @Param("areaCode") String areaCode,
+                                                 @Param("areaCodes") String[] areaCodes,
                                                  @Param("type") String type);
 }

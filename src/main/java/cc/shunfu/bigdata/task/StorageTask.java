@@ -56,6 +56,7 @@ public class StorageTask {
         // 获取当前的日期用于获取当日数据，不提取到公共变量的原因是定时任务执行获取不到最新数据
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
+        String[] areaCodes = {"CPK", "ZPK"};
 
         //用于分页和计数使用
         int page = 0;
@@ -63,7 +64,7 @@ public class StorageTask {
 
         // 利用循环分页获取数据，避免数据量过大导致内存溢出
         while (true) {
-            List<ProcessOutput> processOutputs = processOutputMapper.getProcessOutput(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300, "CPK");
+            List<ProcessOutput> processOutputs = processOutputMapper.getProcessOutput(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300, areaCodes);
 
 //            判断数据是否获取完成
             if (processOutputs.isEmpty()) {
@@ -82,6 +83,7 @@ public class StorageTask {
                 jsonObject.put("F0000061", processOutput.getSkuName());
                 jsonObject.put("F0000059", processOutput.getQty());
                 jsonObject.put("F0000105", processOutput.getType());
+                jsonObject.put("F0000108", processOutput.getId());
                 jsonObject.put("F0000002", formatDate(processOutput.getLottable02(), "yyyy-MM-dd"));
                 jsonArray.add(jsonObject.toString());
             }
@@ -111,12 +113,15 @@ public class StorageTask {
      */
     @Async
     public void sendAutomobileOutputValue() {
+
+        String[] areaCodes = {"CPK", "ZPK"};
+
         // 获取当前的日期用于获取当日数据，不提取到公共变量的原因是定时任务执行获取不到最新数据
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
 //        获取今日的入库数据
-        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", "CPK", "汽车");
+        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", areaCodes, "汽车");
 
         List<String> jsonArray = new ArrayList<>();
 //        遍历获取到的数据
@@ -177,10 +182,12 @@ public class StorageTask {
      */
     @Async
     public void sendEnergyOutputValue() {
+        String[] areaCodes = {"CPK", "ZPK"};
+
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
-        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", "CPK", "储能");
+        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", areaCodes, "储能");
 
         Map<String, Object> paramMap = CyCreate(processOutputs, "D283959swokafnoxwuyxif8jpilk", "储能");
         String CreateStr = JSONObject.valueToString(paramMap);
@@ -201,8 +208,9 @@ public class StorageTask {
     public void sendUniversalOutputValue() {
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
+        String[] areaCodes = {"CPK", "ZPK"};
 
-        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", "CPK", "通用");
+        List<ProcessOutputVO> processOutputs = processOutputMapper.getProcessOutputByType(todayString + " 00:00:00", todayString + " 23:59:59", areaCodes, "通用");
 
         Map<String, Object> paramMap = CyCreate(processOutputs, "D283959szcujforrpeycmctp2u8e", "通用");
         String CreateStr = JSONObject.valueToString(paramMap);

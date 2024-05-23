@@ -56,6 +56,12 @@ spring:
       #配置监控统计拦截的filters：stat:监控统计、self4j(使用log4j的记得导入log4j的依赖）：日志记录、wall：防御sql注入 此处配置不能遗漏服务sql监控台不能监控sql
 
       filter:
+        slf4j:
+          enabled: true
+        stat:
+          enabled: false
+          merge-sql: false
+          slow-sql-millis: 5000
         wall:
           config:
             strict-syntax-check: false

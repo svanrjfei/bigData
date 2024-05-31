@@ -4,9 +4,10 @@
     <insert id="insertOrUpdateReturnSalesOrder" parameterType="cc.shunfu.bigdata.dto.entity.ReturnSalesOrder">
         INSERT INTO return_sales_order
         (id, billNo, documentStatusCaption, approveDate, customerId, customerName,
-         materialId, materialName, realQuantity, taxPrice, totalAmountLC, saleOrgName)
+         materialId, materialName, realQuantity, taxPrice, totalAmountLC, saleOrgName, srcBillNo)
         VALUES (#{id}, #{billNo}, #{documentStatusCaption}, #{approveDate}, #{customerId}, #{customerName},
-                #{materialId}, #{materialName}, #{realQuantity}, #{taxPrice}, #{totalAmountLC}, #{saleOrgName})
+                #{materialId}, #{materialName}, #{realQuantity}, #{taxPrice}, #{totalAmountLC}, #{saleOrgName},
+                #{srcBillNo})
         on duplicate key update documentStatusCaption =
                                     VALUES(documentStatusCaption),
                                 approveDate           =
@@ -23,7 +24,8 @@
                                     VALUES(taxPrice),
                                 totalAmountLC         =
                                     VALUES(totalAmountLC),
-                                saleOrgName=values(saleOrgName)
+                                saleOrgName=values(saleOrgName),
+                                srcBillNo=values(srcBillNo)
     </insert>
     <select id="getReturnSalesOrder" parameterType="map" resultType="cc.shunfu.bigdata.dto.entity.ReturnSalesOrder">
         SELECT *

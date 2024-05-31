@@ -8,7 +8,7 @@
                                  `transferDirect`, `oraText1`, `srcBillTypeId`, `orderTypeName`, `creatorName`,
                                  `approverName`, `amount`, `attachmentCount`, `price`, `outJoinQty`, `oraText3`,
                                  `oraQty`, `secOutJoinQty`, `exchangeRate`, `exchangeTypeName`, `settleCurrName`,
-                                 `baseCurrName`, `modifyDate`, `customerId`, `stockOutOrgName`)
+                                 `baseCurrName`, `modifyDate`, `customerId`, `stockOutOrgName`, `orderNo`)
         VALUES (#{id}, #{billNo}, #{documentStatus}, #{date},
                 #{materialNumber},
                 #{materialName}, #{model}, #{unitName}, #{quantity},
@@ -20,7 +20,7 @@
                 #{approverName}, #{amount}, #{attachmentCount}, #{price},
                 #{outJoinQty}, #{oraText3}, #{oraQty}, #{secOutJoinQty},
                 #{exchangeRate}, #{exchangeTypeName}, #{settleCurrName},
-                #{baseCurrName}, #{modifyDate}, #{customerId}, #{stockOutOrgName})
+                #{baseCurrName}, #{modifyDate}, #{customerId}, #{stockOutOrgName}, #{orderNo})
         on duplicate key update `documentStatus`   = VALUES(`documentStatus`),
                                 `date`             = VALUES(`date`),
                                 `materialNumber`   = VALUES(`materialNumber`),
@@ -55,7 +55,8 @@
                                 `baseCurrName`     = VALUES(`baseCurrName`),
                                 `modifyDate`       = VALUES(`modifyDate`),
                                 `customerId`       = VALUES(`customerId`),
-                                `stockOutOrgName`  = VALUES(`stockOutOrgName`)
+                                `stockOutOrgName`  = VALUES(`stockOutOrgName`),
+                                `orderNo`          = VALUES(`orderNo`)
     </insert>
     <select id="getSalesOrders" parameterType="map" resultType="cc.shunfu.bigdata.dto.entity.SalesOrder">
         SELECT id,
@@ -68,7 +69,8 @@
                destStockLocName,
                materialNumber,
                materialName,
-               stockOutOrgName
+               stockOutOrgName,
+               orderNo
         FROM sales_order
         WHERE modifyDate BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
         ORDER BY modifyDate DESC

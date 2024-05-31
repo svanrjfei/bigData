@@ -58,10 +58,10 @@ public class ReturnSalesOrderTask {
     public void getReturnSales() {
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
-        
+
         List<ReturnSalesOrder> salesOrderEntities = new ArrayList<>();
 
-        String fieldKeys = "FEntity_FEntryId,FBillNo,FDocumentStatus.FCaption,FApproveDate,FRetcustId.FNumber,FRetcustId.FName,FMaterialId.FNumber,FMaterialId.FName,FRealQty,FTaxPrice,FAllAmount_LC,FSaleOrgId.FName";
+        String fieldKeys = "FEntity_FEntryId,FBillNo,FSrcBillNo,FDocumentStatus.FCaption,FApproveDate,FRetcustId.FNumber,FRetcustId.FName,FMaterialId.FNumber,FMaterialId.FName,FRealQty,FTaxPrice,FAllAmount_LC,FSaleOrgId.FName";
         LinkedList<String> queryFilters = new LinkedList<>();
 
         queryFilters.add(String.format("FDocumentStatus = '%s'", "C"));

@@ -24,6 +24,10 @@ public class SalesOrder {
     @TableField("bill_no")
     private String billNo;
 
+    // 订单编号
+    @TableField("order_no")
+    private String orderNo;
+
     // 文档状态
     @TableField("document_status")
     private String documentStatus;

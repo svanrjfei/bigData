@@ -24,6 +24,9 @@ public class ReturnSalesOrder {
     @TableField("bill_no")
     private String billNo;
 
+    @TableField("src_billNo")
+    private String srcBillNo;
+
     // 单据状态
     @TableField("document_status_caption")
     private String documentStatusCaption;

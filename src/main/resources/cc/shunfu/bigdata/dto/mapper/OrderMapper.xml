@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.shunfu.bigdata.dto.mapper.OrderMapper">
+    <insert id="insertOrUpdateOrder" parameterType="cc.shunfu.bigdata.dto.entity.Order">
+        INSERT INTO `orders` (`id`, `bill_no`, `bill_type_id_name`, `sale_dept_id_name`, `saler_id_name`,
+                              `cust_id_name`, `cust_id_number`, `rec_condition_id_name`, `material_id_number`,
+                              `material_name`, `material_model`, `qty`, `price`, `tax_price`, `entry_tax_rate`,
+                              `entry_tax_amount`, `amount_lc`, `all_amount_lc`, `delivery_date`, `approve_date`)
+        VALUES (#{id}, #{billNo}, #{billTypeIDName}, #{saleDeptIdName}, #{salerIdName},
+                #{custIdName}, #{custIdNumber}, #{recConditionIdName}, #{materialIdNumber},
+                #{materialName}, #{materialModel}, #{qty}, #{price}, #{taxPrice}, #{entryTaxRate},
+                #{entryTaxAmount}, #{amountLC}, #{allAmountLC}, #{deliveryDate}, #{approveDate})
+        ON DUPLICATE KEY UPDATE `bill_no`               = VALUES(`bill_no`),
+                                `bill_type_id_name`     = VALUES(`bill_type_id_name`),
+                                `sale_dept_id_name`     = VALUES(`sale_dept_id_name`),
+                                `saler_id_name`         = VALUES(`saler_id_name`),
+                                `cust_id_name`          = VALUES(`cust_id_name`),
+                                `cust_id_number`        = VALUES(`cust_id_number`),
+                                `rec_condition_id_name` = VALUES(`rec_condition_id_name`),
+                                `material_id_number`    = VALUES(`material_id_number`),
+                                `material_name`         = VALUES(`material_name`),
+                                `material_model`        = VALUES(`material_model`),
+                                `qty`                   = VALUES(`qty`),
+                                `price`                 = VALUES(`price`),
+                                `tax_price`             = VALUES(`tax_price`),
+                                `entry_tax_rate`        = VALUES(`entry_tax_rate`),
+                                `entry_tax_amount`      = VALUES(`entry_tax_amount`),
+                                `amount_lc`             = VALUES(`amount_lc`),
+                                `all_amount_lc`         = VALUES(`all_amount_lc`),
+                                `delivery_date`         = VALUES(`delivery_date`),
+                                `approve_date`          = VALUES(`approve_date`)
+    </insert>
+
+    <select id="getOrders" parameterType="map" resultType="cc.shunfu.bigdata.dto.entity.Order">
+        SELECT id,
+               bill_no               AS billNo,
+               bill_type_id_name     AS billTypeIDName,
+               sale_dept_id_name     AS saleDeptIdName,
+               saler_id_name         AS salerIdName,
+               cust_id_name          AS custIdName,
+               cust_id_number        AS custIdNumber,
+               rec_condition_id_name AS recConditionIdName,
+               material_id_number    AS materialIdNumber,
+               material_name         AS materialName,
+               material_model        AS materialModel,
+               qty,
+               price,
+               tax_price             AS taxPrice,
+               entry_tax_rate        AS entryTaxRate,
+               entry_tax_amount      AS entryTaxAmount,
+               amount_lc             AS amountLC,
+               all_amount_lc         AS allAmountLC,
+               delivery_date         AS deliveryDate,
+               approve_date          AS approveDate
+        FROM `orders`
+        WHERE approve_date BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        ORDER BY approve_date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+</mapper>

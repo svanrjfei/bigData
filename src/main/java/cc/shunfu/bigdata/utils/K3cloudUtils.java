@@ -59,6 +59,8 @@ public class K3cloudUtils {
             // 调用K3Cloud接口获取数据
             List<List<Object>> resultJson = client.executeBillQuery(jsonData);
 
+            log.info("获取金蝶数据：" + resultJson);
+
             // 若返回的数据为空，则数据同步完成，跳出循环
             if (resultJson.isEmpty()) {
                 log.info("金蝶数据同步完成！");

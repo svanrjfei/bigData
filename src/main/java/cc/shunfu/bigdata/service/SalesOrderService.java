@@ -1,5 +1,6 @@
 package cc.shunfu.bigdata.service;
 
+import cc.shunfu.bigdata.dto.entity.Order;
 import cc.shunfu.bigdata.dto.entity.ReturnSalesOrder;
 import cc.shunfu.bigdata.dto.entity.SalesOrder;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,22 @@ public interface SalesOrderService {
      */
 
     List<ReturnSalesOrder> getReturnSalesOrders(String startDate, String endDate, int offset, int limit);
+
+
+    /**
+     * 获取销售订单
+     *
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @param page      页数
+     * @param limit     每页数量
+     * @return Order
+     * @author svanrj
+     * @date 2024/6/3
+     */
+
+
+    List<Order> getOrders(String startDate, String endDate, int page, int limit);
+
 
 }

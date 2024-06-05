@@ -119,6 +119,7 @@ public class ReturnSalesOrderTask {
                 jsonObject.put("F0000035", returnSalesOrder.getMaterialName());
                 jsonObject.put("F0000042", returnSalesOrder.getId());
                 jsonObject.put("F0000043", "销售退货");
+                jsonObject.put("F0000045", returnSalesOrder.getSrcBillNo());
                 jsonArray.add(jsonObject.toString());
             }
 

@@ -4,6 +4,7 @@ import cc.shunfu.bigdata.dto.entity.Order;
 import cc.shunfu.bigdata.dto.entity.SalesOrder;
 import cc.shunfu.bigdata.dto.mapper.OrderMapper;
 import cc.shunfu.bigdata.dto.mapper.SalesOrderMapper;
+import cc.shunfu.bigdata.dto.vo.result.OrderCustomer;
 import cc.shunfu.bigdata.service.SalesOrderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.ExecutorType;
@@ -64,11 +65,15 @@ public class OrderTask {
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
 
         List<Order> orderEntities = new ArrayList<>();
-        String fieldKeys = "FSaleOrderEntry_FEntryId,FBillNo, FBillTypeID.FName,FSaleDeptId.FName,FSalerId.FName,FCustId.FName,FCustId.FNumber,FRecConditionId.FName,FMaterialId.FNumber,FMaterialName,FMaterialModel,FQty,FPrice,FTaxPrice,FEntryTaxRate,FEntryTaxAmount,FAmount_LC,FAllAmount_LC,FDeliveryDate,FApproveDate";
+        String fieldKeys = "FBillNo,FBillTypeID.FName,FSaleDeptId.FName,FSalerId.FName,FCustId.FName,FCustId.FNumber,FRecConditionId.FName,FQty,FAllAmount_LC,FDeliveryDate,FApproveDate";
         LinkedList<String> queryFilters = new LinkedList<>();
 
         queryFilters.add(String.format("FApproveDate >= '%s'", todayString + " 00:00:00"));
         queryFilters.add(String.format("FApproveDate <= '%s'", todayString + " 23:59:59"));
+        queryFilters.add(String.format("FDocumentStatus = '%s'", "C"));
+        queryFilters.add(String.format("FBillTypeID != '%s'", "63e353134f4d35"));
+
+
         String filterStr = String.join(" and ", queryFilters);
         // 处理获取到的所有数据
 
@@ -95,16 +100,16 @@ public class OrderTask {
         final LocalDateTime today = LocalDateTime.now();
         final String todayString = formatDateTime(today, "yyyy-MM-dd");
         while (true) {
-            List<Order> salesOrders = salesOrderService.getOrders(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
+            List<OrderCustomer> orderCustomers = salesOrderService.getOrders(todayString + " 00:00:00", todayString + " 23:59:59", page * 300, 300);
 
-            if (salesOrders.isEmpty()) {
+            if (orderCustomers.isEmpty()) {
                 log.info("氚云数据同步完成!" + "共同步" + count + "条数据");
                 break;
             }
-            count += salesOrders.size();
+            count += orderCustomers.size();
 
             List<String> jsonArray = new ArrayList<>();
-            for (Order order : salesOrders) {
+            for (OrderCustomer order : orderCustomers) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("F0000011", formatDate(order.getApproveDate(), "yyyy-MM-dd"));
                 jsonObject.put("F0000071", order.getBillNo());
@@ -112,19 +117,14 @@ public class OrderTask {
                 jsonObject.put("F0000041", order.getBillTypeIDName());
                 jsonObject.put("F0000073", order.getSaleDeptIdName());
                 jsonObject.put("F0000074", order.getSalerIdName());
-                jsonObject.put("F0000072", order.getCustIdName());
+                jsonObject.put("F0000099", order.getObjectId());
                 jsonObject.put("F0000094", order.getCustIdNumber());
                 jsonObject.put("F0000075", order.getRecConditionIdName());
-                jsonObject.put("F0000076", order.getMaterialIdNumber());
-                jsonObject.put("F0000077", order.getMaterialName());
-                jsonObject.put("F0000079", order.getMaterialModel());
                 jsonObject.put("F0000078", order.getQty());
-                jsonObject.put("F0000080", order.getPrice());
-                jsonObject.put("F0000081", order.getTaxPrice());
-                jsonObject.put("F0000090", order.getEntryTaxRate());
-                jsonObject.put("F0000091", order.getEntryTaxAmount());
-                jsonObject.put("F0000092", order.getAmountLC());
+                jsonObject.put("F0000089", order.getQty());
                 jsonObject.put("F0000093", order.getAllAmountLC());
+                jsonObject.put("F0000097", order.getAllAmountLC());
+                jsonObject.put("F0000046", order.getDept());
                 jsonObject.put("F0000082", formatDate(order.getDeliveryDate(), "yyyy-MM-dd"));
                 jsonArray.add(jsonObject.toString());
             }

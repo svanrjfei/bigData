@@ -114,14 +114,15 @@ public class SalesOrderTask {
                 jsonObject.put("F0000040", formatDate(salesOrder.getModifyDate(), "yyyy-MM"));
                 jsonObject.put("F0000032", calendar.get(Calendar.YEAR));
                 jsonObject.put("F0000041", salesOrder.getCustomerId());
-                jsonObject.put("F0000038", salesOrder.getAllAmount());
-                jsonObject.put("F0000037", salesOrder.getTaxPrice());
+                jsonObject.put("F0000038", salesOrder.getAllAmount() * salesOrder.getExchangeRate());
+                jsonObject.put("F0000037", salesOrder.getTaxPrice() * salesOrder.getExchangeRate());
                 jsonObject.put("F0000036", salesOrder.getQuantity());
                 jsonObject.put("F0000019", salesOrder.getDestStockLocName());
                 jsonObject.put("F0000034", salesOrder.getMaterialNumber());
                 jsonObject.put("F0000035", salesOrder.getMaterialName());
                 jsonObject.put("F0000042", salesOrder.getId());
                 jsonObject.put("F0000043", "直接调拨单");
+                jsonObject.put("F0000045", salesOrder.getOrderNo());
                 jsonArray.add(jsonObject.toString());
             }
 

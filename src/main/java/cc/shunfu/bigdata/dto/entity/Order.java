@@ -16,12 +16,9 @@ import java.util.Date;
 @Data
 @TableName("order") // 假设数据库中的表名是 sales_order
 public class Order {
-    // 销售订单条目ID
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
 
     // 订单编号
-    @TableField("bill_no")
+    @TableId(value = "id", type = IdType.AUTO)
     private String billNo;
 
     // 订单类型名称
@@ -48,41 +45,9 @@ public class Order {
     @TableField("rec_condition_id_name")
     private String recConditionIdName;
 
-    // 物料编码
-    @TableField("material_id_number")
-    private String materialIdNumber;
-
-    // 物料名称
-    @TableField("material_name")
-    private String materialName;
-
-    // 物料型号
-    @TableField("material_model")
-    private String materialModel;
-
     // 数量
     @TableField("qty")
     private double qty;
-
-    // 价格
-    @TableField("price")
-    private double price;
-
-    // 含税价格
-    @TableField("tax_price")
-    private double taxPrice;
-
-    // 税率
-    @TableField("entry_tax_rate")
-    private double entryTaxRate;
-
-    // 税额
-    @TableField("entry_tax_amount")
-    private double entryTaxAmount;
-
-    // 金额（本位币）
-    @TableField("amount_lc")
-    private double amountLC;
 
     // 总金额（本位币）
     @TableField("all_amount_lc")
@@ -95,4 +60,6 @@ public class Order {
     // 批准日期
     @TableField("approve_date")
     private Date approveDate;
+
+
 }

@@ -3,6 +3,7 @@ package cc.shunfu.bigdata.service;
 import cc.shunfu.bigdata.dto.entity.Order;
 import cc.shunfu.bigdata.dto.entity.ReturnSalesOrder;
 import cc.shunfu.bigdata.dto.entity.SalesOrder;
+import cc.shunfu.bigdata.dto.vo.result.OrderCustomer;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public interface SalesOrderService {
      */
 
 
-    List<Order> getOrders(String startDate, String endDate, int page, int limit);
+    List<OrderCustomer> getOrders(String startDate, String endDate, int page, int limit);
 
 
 }

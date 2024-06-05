@@ -6,6 +6,7 @@ import cc.shunfu.bigdata.dto.entity.SalesOrder;
 import cc.shunfu.bigdata.dto.mapper.OrderMapper;
 import cc.shunfu.bigdata.dto.mapper.ReturnSalesOrderMapper;
 import cc.shunfu.bigdata.dto.mapper.SalesOrderMapper;
+import cc.shunfu.bigdata.dto.vo.result.OrderCustomer;
 import cc.shunfu.bigdata.service.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
-    public List<Order> getOrders(String startDate, String endDate, int page, int limit) {
+    public List<OrderCustomer> getOrders(String startDate, String endDate, int page, int limit) {
         return orderMapper.getOrders(startDate, endDate, page, limit);
     }
 

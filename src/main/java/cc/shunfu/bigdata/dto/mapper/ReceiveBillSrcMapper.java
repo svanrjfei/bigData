@@ -1,8 +1,10 @@
 package cc.shunfu.bigdata.dto.mapper;
 
 import cc.shunfu.bigdata.dto.entity.Order;
+import cc.shunfu.bigdata.dto.entity.ReceiveBillSrc;
 import cc.shunfu.bigdata.dto.entity.SalesOrder;
 import cc.shunfu.bigdata.dto.vo.result.OrderCustomer;
+import cc.shunfu.bigdata.dto.vo.result.ReceiveBillSrcCustomer;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,10 +18,10 @@ import java.util.List;
  */
 
 @Mapper
-public interface OrderMapper extends BaseMapper<Order> {
-    int insertOrUpdateOrder(Order order);
+public interface ReceiveBillSrcMapper extends BaseMapper<ReceiveBillSrc> {
+    int insertOrUpdateReceiveBill(ReceiveBillSrc receiveBillSrc);
 
-    List<OrderCustomer> getOrders(
+    List<ReceiveBillSrcCustomer> getReceiveBill(
             @Param("startDate") String startDate,
             @Param("endDate") String endDate,
             @Param("offset") int offset,

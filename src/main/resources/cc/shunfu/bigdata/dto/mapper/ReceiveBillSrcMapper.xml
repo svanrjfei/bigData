@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.shunfu.bigdata.dto.mapper.ReceiveBillSrcMapper">
+    <insert id="insertOrUpdateReceiveBill" parameterType="cc.shunfu.bigdata.dto.entity.ReceiveBillSrc">
+        INSERT INTO `receive_bill_src` (`id`, `bill_type_id_number`, `order_bill_no`, `date`,
+                                        `pay_unit_name`, `pay_unit_number`, `real_rec_amount_for_s`, `approve_date`)
+        VALUES (#{id}, #{billTypeIdNumber}, #{orderBillNo}, #{date},
+                #{payUnitName}, #{payUnitNumber}, #{realRecAmountForS}, #{approveDate})
+        ON DUPLICATE KEY UPDATE `bill_type_id_number`   = VALUES(`bill_type_id_number`),
+                                `order_bill_no`         = VALUES(`order_bill_no`),
+                                `date`                  = VALUES(`date`),
+                                `pay_unit_name`         = VALUES(`pay_unit_name`),
+                                `pay_unit_number`       = VALUES(`pay_unit_number`),
+                                `real_rec_amount_for_s` = VALUES(`real_rec_amount_for_s`),
+                                `approve_date`          = VALUES(`approve_date`)
+    </insert>
+
+    <select id="getReceiveBill" parameterType="map" resultType="cc.shunfu.bigdata.dto.vo.result.ReceiveBillSrcCustomer">
+        SELECT rbc.id                    AS id,
+               rbc.bill_type_id_number   AS billTypeIdNumber,
+               rbc.order_bill_no         AS orderBillNo,
+               rbc.date,
+               rbc.pay_unit_name         AS payUnitName,
+               rbc.pay_unit_number       AS payUnitNumber,
+               rbc.real_rec_amount_for_s AS realRecAmountForS,
+               rbc.approve_date          AS approveDate,
+               cc.object_id,
+               cc.dept
+        FROM `receive_bill_src` rbc
+                 left join crm_customer cc on cc.customer_id = rbc.pay_unit_number
+        WHERE date BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        ORDER BY date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+</mapper>

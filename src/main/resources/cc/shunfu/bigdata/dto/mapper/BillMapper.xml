@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.shunfu.bigdata.dto.mapper.BillMapper">
+    <insert id="insertOrUpdateBill" parameterType="cc.shunfu.bigdata.dto.entity.Bill">
+        INSERT INTO `bill` (`bill_no`, `bill_type_name`, `customer_name`, `customer_number`,
+                            `all_amount`, `end_date`, `approve_date`)
+        VALUES (#{billNo}, #{billTypeName}, #{customerName}, #{customerNumber},
+                #{allAmount}, #{endDate}, #{approveDate})
+        ON DUPLICATE KEY UPDATE `bill_type_name`  = VALUES(`bill_type_name`),
+                                `customer_name`   = VALUES(`customer_name`),
+                                `customer_number` = VALUES(`customer_number`),
+                                `all_amount`      = `all_amount` + VALUES(`all_amount`),
+                                `end_date`        = VALUES(`end_date`),
+                                `approve_date`    = VALUES(`approve_date`)
+    </insert>
+
+    <select id="getBills" parameterType="map" resultType="cc.shunfu.bigdata.dto.vo.result.BillCustomer">
+        SELECT bill.bill_no         AS billNo,
+               bill.bill_type_name  AS billTypeName,
+               bill.customer_name   AS customerName,
+               bill.customer_number AS customerNumber,
+               bill.all_amount      AS allAmount,
+               bill.end_date        AS endDate,
+               bill.approve_date    AS approveDate,
+               cc.object_id,
+               cc.dept
+        FROM `bill`
+                 left join crm_customer cc on bill.customer_number = cc.customer_id
+        WHERE approve_date BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        ORDER BY approve_date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+</mapper>

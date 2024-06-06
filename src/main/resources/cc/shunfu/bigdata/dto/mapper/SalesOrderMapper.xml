@@ -70,7 +70,8 @@
                materialNumber,
                materialName,
                stockOutOrgName,
-               orderNo
+               orderNo,
+               exchangeRate
         FROM sales_order
         WHERE modifyDate BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%s')
         ORDER BY modifyDate DESC

@@ -125,6 +125,7 @@ public class OrderTask {
                 jsonObject.put("F0000093", order.getAllAmountLC());
                 jsonObject.put("F0000097", order.getAllAmountLC());
                 jsonObject.put("F0000046", order.getDept());
+                jsonObject.put("F0000100", order.getCustIdName());
                 jsonObject.put("F0000082", formatDate(order.getDeliveryDate(), "yyyy-MM-dd"));
                 jsonArray.add(jsonObject.toString());
             }

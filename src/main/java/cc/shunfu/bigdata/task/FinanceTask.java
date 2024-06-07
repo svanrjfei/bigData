@@ -1,15 +1,11 @@
 package cc.shunfu.bigdata.task;
 
 import cc.shunfu.bigdata.dto.entity.Bill;
-import cc.shunfu.bigdata.dto.entity.Order;
 import cc.shunfu.bigdata.dto.entity.ReceiveBillSrc;
 import cc.shunfu.bigdata.dto.mapper.BillMapper;
-import cc.shunfu.bigdata.dto.mapper.OrderMapper;
 import cc.shunfu.bigdata.dto.mapper.ReceiveBillSrcMapper;
 import cc.shunfu.bigdata.dto.vo.result.BillCustomer;
-import cc.shunfu.bigdata.dto.vo.result.OrderCustomer;
 import cc.shunfu.bigdata.dto.vo.result.ReceiveBillSrcCustomer;
-import cc.shunfu.bigdata.service.SalesOrderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;

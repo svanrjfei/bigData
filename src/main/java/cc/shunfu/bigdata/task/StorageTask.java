@@ -135,9 +135,9 @@ public class StorageTask {
             CrmRxConfig crmRxConfig = crmRxConfigMapper.selectOne(queryWrapper);    // 查询人效产值目标
 
             if (crmRxConfig != null) {
-                float jjdcl = processOutput.getTotalMachineAddition() / crmRxConfig.getJjCz();  // 机加达成率
+                float jjdcl = crmRxConfig.getJjCz() == 0 ? 0 : processOutput.getTotalMachineAddition() / crmRxConfig.getJjCz();  // 机加达成率
                 float gxcz = processOutput.getTotalMachineAddition() + processOutput.getTotalFrictionWelding() + processOutput.getTotalCleaning() + processOutput.getTotalSideLeakage() + processOutput.getTotalAssembleCost(); // 工序总产值
-                float gxdcl = gxcz / crmRxConfig.getCz(); // 工序达成率
+                float gxdcl = crmRxConfig.getCz() == 0 ? 0 : gxcz / crmRxConfig.getCz(); // 工序达成率
 
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("F0000109", "三大事业部");
@@ -155,6 +155,7 @@ public class StorageTask {
                 jsonObject.put("F0000077", gxcz);
                 jsonObject.put("F0000110", jjdcl);
                 jsonObject.put("F0000081", gxdcl);
+
                 jsonArray.add(jsonObject.toString());
             } else {
                 log.info(formatDate(processOutput.getDate(), "yyyy-MM-dd") + " 的人效产值目标暂未设定");
@@ -234,12 +235,13 @@ public class StorageTask {
             QueryWrapper<CrmRxConfig> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("type", type);
             queryWrapper.apply("DATE_FORMAT(mb_date, '%Y-%m') = DATE_FORMAT('" + formatDate(processOutput.getDate(), "yyyy-MM-dd") + "', '%Y-%m')");
+            queryWrapper.last("limit 1");
             CrmRxConfig crmRxConfig = crmRxConfigMapper.selectOne(queryWrapper);
             if (crmRxConfig != null) {
-                float jjdcl = processOutput.getTotalMachineAddition() / crmRxConfig.getJjCz();
-                float zbdcl = processOutput.getTotalAssembleCost() / crmRxConfig.getZpCz();
+                float jjdcl = crmRxConfig.getJjCz() == 0 ? 0 : processOutput.getTotalMachineAddition() / crmRxConfig.getJjCz();
+                float zbdcl = crmRxConfig.getZpCz() == 0 ? 0 : processOutput.getTotalAssembleCost() / crmRxConfig.getZpCz();
                 float gxcz = processOutput.getTotalMachineAddition() + processOutput.getTotalFrictionWelding() + processOutput.getTotalCleaning() + processOutput.getTotalSideLeakage() + processOutput.getTotalAssembleCost();
-                float gxdcl = gxcz / crmRxConfig.getCz();
+                float gxdcl = crmRxConfig.getCz() == 0 ? 0 : gxcz / crmRxConfig.getCz();
 
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("F0000109", "三大事业部");
